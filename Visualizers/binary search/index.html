@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Visualization</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="array-size">Array Size (n):</label>
+                    <input type="number" class="form-control" id="array-size" placeholder="Enter number of elements">
+                </div>
+                <div class="form-group">
+                    <label for="array-elements">Array Elements:</label>
+                    <input type="text" class="form-control" id="array-elements" placeholder="Enter space-separated values">
+                </div>
+                <div class="form-group">
+                    <label for="target-element">Target Element:</label>
+                    <input type="number" class="form-control" id="target-element" placeholder="Enter the target value">
+                </div>
+                <button class="btn btn-primary" id="visualize-button">Visualize</button>
+                <button class="btn btn-secondary mt-2" id="view-code-button">View Framed Code Snippet</button>
+            </div>
+            <div class="col-md-6">
+                <div id="visualization" class="visualization"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Code Snippet -->
+    <div id="codeModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">C Code Snippet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <pre id="code-snippet"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
