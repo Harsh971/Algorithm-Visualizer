@@ -1,0 +1,74 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+}
+.input-section {
+  width: 300px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-right: 20px;
+}
+.input-section h2, .input-section h3 {
+  margin-top: 0;
+}
+.canvas-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e3e9ef;
+  border-radius: 8px;
+}
+canvas {
+  background-color: white;
+  border: 1px solid #ccc;
+}
+button {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2980b9;
+}
+#edge-list {
+  margin-top: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 5px;
+  background-color: #f9f9f9;
+}
+.edge-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.edge-entry button {
+  background-color: #e74c3c;
+  padding: 4px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.edge-entry button:hover {
+  background-color: #c0392b;
+}

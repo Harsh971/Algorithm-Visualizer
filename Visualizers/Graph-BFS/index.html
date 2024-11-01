@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph BFS Traversals</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Left Sidebar for Inputs -->
+    <div class="input-section" style="width: 30%; float: left; padding: 20px;">
+      <h2>Graph Input</h2>
+      <label for="nodes">Number of Nodes (n):</label>
+      <input type="number" id="nodes" min="1" required><br><br>
+      
+      <label for="edges">Edges (start - end):</label>
+      <div id="edges-container">
+        <input type="text" class="edge-input" placeholder="e.g., 1-2" required>
+      </div>
+      
+      <button id="add-edge">Add Edge</button><br><br>
+      
+      <!-- New section to display the list of added edges -->
+      <h3>Added Edges:</h3>
+      <div id="edge-list" style="border: 1px solid #ddd; padding: 10px; min-height: 50px;"></div><br>
+
+      <label for="start-node">Starting Vertex for BFS:</label>
+      <input type="number" id="start-node" min="1" required><br><br>
+
+      <button id="start-visualizer">START</button>
+    </div>
+
+    <!-- Right Section for Animation/Visualizer -->
+    <div class="visualization-section" style="width: 70%; height: 100vh; float: right; padding: 20px; box-sizing: border-box;">
+      <canvas id="visualizer-canvas"></canvas>
+      <div id="result-message" style="text-align: center; margin-top: 20px; font-size: 18px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('visualizer-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let nodes = [];
+    let edges = [];
+
+    // Set the canvas size to fill the visualization section
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+
+    function generateNodes(n) {
+        nodes = [];
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n;
+            const x = centerX + 150 * Math.cos(angle);
+            const y = centerY + 150 * Math.sin(angle);
+
+            nodes.push({ id: i + 1, x: x, y: y });
+        }
+    }
+
+    function drawGraph() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        edges.forEach(edge => {
+            const startNode = nodes.find(node => node.id === edge.start);
+            const endNode = nodes.find(node => node.id === edge.end);
+
+            if (startNode && endNode) {
+                ctx.beginPath();
+                ctx.moveTo(startNode.x, startNode.y);
+                ctx.lineTo(endNode.x, endNode.y);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#2c3e50';
+                ctx.stroke();
+                ctx.closePath();
+            }
+        });
+
+        nodes.forEach(node => {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, 20, 0, 2 * Math.PI);
+            ctx.fillStyle = '#3498db';
+            ctx.fill();
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(node.id, node.x, node.y);
+        });
+    }
+
+    document.getElementById('add-edge').addEventListener('click', function () {
+        const edgeInput = document.querySelector('.edge-input').value;
+        const [start, end] = edgeInput.split('-').map(Number);
+
+        if (!isNaN(start) && !isNaN(end) && start !== end) {
+            edges.push({ start, end });
+            document.querySelector('.edge-input').value = '';
+
+            drawGraph();
+            updateEdgeList();
+        } else {
+            alert('Please enter a valid edge format, e.g., 1-2.');
+        }
+    });
+
+    function updateEdgeList() {
+        const edgeListElement = document.getElementById('edge-list');
+        edgeListElement.innerHTML = ''; // Clear the list
+
+        edges.forEach(edge => {
+            const edgeDiv = document.createElement('div');
+            edgeDiv.textContent = `Edge: ${edge.start}-${edge.end} `;
+            
+            // Create a remove button for each edge
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', function () {
+                removeEdge(edge.start, edge.end);
+            });
+
+            edgeDiv.appendChild(removeButton);
+            edgeListElement.appendChild(edgeDiv);
+        });
+    }
+
+    function removeEdge(start, end) {
+        // Find the index of the edge to remove
+        const edgeIndex = edges.findIndex(edge => 
+            (edge.start === start && edge.end === end) || 
+            (edge.start === end && edge.end === start)
+        );
+
+        if (edgeIndex !== -1) {
+            edges.splice(edgeIndex, 1); // Remove the edge
+            drawGraph(); // Redraw the graph
+            updateEdgeList(); // Update the edge list display
+        }
+    }
+
+    document.getElementById('start-visualizer').addEventListener('click', function () {
+        const nodeCount = parseInt(document.getElementById('nodes').value);
+        const startVertex = parseInt(document.getElementById('start-node').value);
+
+        if (isNaN(nodeCount) || nodeCount < 1 || isNaN(startVertex)) {
+            alert('Please enter valid inputs for nodes and starting vertex.');
+            return;
+        }
+
+        generateNodes(nodeCount);
+        drawGraph();
+
+        const traversals = findAllBFSTraversals(startVertex);
+        const resultElement = document.getElementById('result-message');
+
+        if (traversals) {
+            resultElement.innerHTML = 'All Possible BFS Traversals:<br>';
+            traversals.forEach((traversal, index) => {
+                resultElement.innerHTML += `Traversal ${index + 1}: ${traversal.join(' -> ')}<br>`;
+            });
+            resultElement.style.color = 'green';
+        } else {
+            resultElement.innerText = 'BFS Traversal not possible.';
+            resultElement.style.color = 'red';
+        }
+    });
+
+    // Helper function to generate permutations of an array
+    function getPermutations(arr) {
+        if (arr.length <= 1) return [arr];
+        const result = [];
+        for (let i = 0; i < arr.length; i++) {
+            const rest = getPermutations(arr.slice(0, i).concat(arr.slice(i + 1)));
+            for (const perm of rest) {
+                result.push([arr[i], ...perm]);
+            }
+        }
+        return result;
+    }
+
+    function findAllBFSTraversals(startVertex) {
+        const allTraversals = [];
+        const queue = [{ path: [startVertex], visited: new Set([startVertex]) }];
+        const allNodes = new Set(nodes.map(node => node.id));
+
+        while (queue.length > 0) {
+            const { path, visited } = queue.shift();
+            const lastNode = path[path.length - 1];
+
+            if (visited.size === allNodes.size) {
+                allTraversals.push(path);
+                continue;
+            }
+
+            const neighbors = edges
+                .filter(edge => edge.start === lastNode || edge.end === lastNode)
+                .map(edge => edge.start === lastNode ? edge.end : edge.start)
+                .filter(neighbor => !visited.has(neighbor));
+
+            const neighborPermutations = getPermutations(neighbors);
+            
+            for (const perm of neighborPermutations) {
+                const newPath = [...path, ...perm];
+                const newVisited = new Set(visited);
+                perm.forEach(node => newVisited.add(node));
+                queue.push({ path: newPath, visited: newVisited });
+            }
+        }
+
+        return allTraversals.length > 0 ? allTraversals : null;
+    }
+</script>
+</body>
+</html>
