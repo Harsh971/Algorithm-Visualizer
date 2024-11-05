@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BST Validator Visualizer</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      position: relative;
+    }
+    #treeArea {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      overflow: visible;
+    }
+    .node {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+    .highlight {
+      background-color: #FFD700;
+    }
+    .error {
+      background-color: #FF6347; /* Red for nodes violating BST rules */
+    }
+    .line {
+      position: absolute;
+      background-color: #000;
+      height: 2px;
+      transform-origin: top left;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>BST Validator Visualizer</h2>
+  <label>Node Value:</label><br>
+  <input type="text" id="nodeValue"><br><br>
+  <label>Parent Node:</label><br>
+  <input type="text" id="parentNode"><br><br>
+  <label>Position (Left/Right):</label><br>
+  <select id="position">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+  </select><br><br>
+  <button onclick="addNode()">Add Node</button>
+  <hr>
+  <button onclick="validateBST()">Check if Tree is BST</button>
+  <div id="output"></div>
+</div>
+
+<div id="visualization">
+  <div id="treeArea"></div>
+</div>
+
+<script>
+  class TreeNode {
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
+  }
+
+  class Tree {
+    constructor() {
+      this.root = null;
+    }
+
+    addNode(value, parentValue, position) {
+      const newNode = new TreeNode(value);
+      if (!this.root) {
+        this.root = newNode;
+        this.displayTree();
+        return;
+      }
+      const parentNode = this.findNode(this.root, parentValue);
+      if (!parentNode) {
+        alert('Parent node not found.');
+        return;
+      }
+      if (position === 'left' && !parentNode.left) {
+        parentNode.left = newNode;
+      } else if (position === 'right' && !parentNode.right) {
+        parentNode.right = newNode;
+      } else {
+        alert('Invalid position or parent already has two children.');
+      }
+      this.displayTree();
+    }
+
+    findNode(node, value) {
+      if (!node) return null;
+      if (node.value === value) return node;
+      return this.findNode(node.left, value) || this.findNode(node.right, value);
+    }
+
+    displayTree() {
+      const treeArea = document.getElementById('treeArea');
+      treeArea.innerHTML = ''; // Clear existing nodes and lines
+      this.renderNode(this.root, treeArea, window.innerWidth / 4, 50, 0);
+    }
+
+    renderNode(node, container, x, y, level) {
+      if (!node) return;
+
+      const nodeElem = document.createElement('div');
+      nodeElem.className = 'node';
+      nodeElem.id = `node-${node.value}`;
+      nodeElem.innerText = node.value;
+      nodeElem.style.left = `${x}px`;
+      nodeElem.style.top = `${y}px`;
+
+      container.appendChild(nodeElem);
+
+      const xOffset = 120 / (level + 1);
+      const yOffset = 80;
+
+      if (node.left) {
+        const childX = x - xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.left, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15);
+      }
+      
+      if (node.right) {
+        const childX = x + xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.right, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15);
+      }
+    }
+
+    drawLine(container, x1, y1, x2, y2) {
+      const line = document.createElement('div');
+      line.className = 'line';
+
+      const totalLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      const adjustedLength = totalLength * 0.6; // Adjusted to 60% of full length
+
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+
+      // Calculate new starting and ending points for the shortened line
+      const startX = x1 + (totalLength * 0.2) * Math.cos(angle);
+      const startY = y1 + (totalLength * 0.2) * Math.sin(angle);
+      const endX = x2 - (totalLength * 0.2) * Math.cos(angle);
+      const endY = y2 - (totalLength * 0.2) * Math.sin(angle);
+
+      // Set the line length and position it at the calculated start point
+      line.style.width = `${adjustedLength}px`;
+      line.style.left = `${startX}px`;
+      line.style.top = `${startY}px`;
+
+      // Rotate the line to match the angle between start and end points
+      const rotationAngle = angle * (180 / Math.PI);
+      line.style.transform = `rotate(${rotationAngle}deg)`;
+
+      container.appendChild(line);
+    }
+  }
+
+  const tree = new Tree();
+
+  function addNode() {
+    const value = parseInt(document.getElementById('nodeValue').value.trim(), 10);
+    const parentValue = parseInt(document.getElementById('parentNode').value.trim(), 10);
+    const position = document.getElementById('position').value;
+
+    if (isNaN(value)) {
+      alert("Node value must be a number");
+      return;
+    }
+    if (value === parentValue) {
+      alert("A node can't be its own parent.");
+      return;
+    }
+
+    tree.addNode(value, parentValue, position);
+    document.getElementById('nodeValue').value = '';
+    document.getElementById('parentNode').value = '';
+  }
+
+  async function validateBST() {
+  document.getElementById('output').innerText = "Checking if the tree is a BST...";
+  const invalidNodes = []; // Array to keep track of nodes that violate BST rules
+  const result = await checkBST(tree.root, -Infinity, Infinity, invalidNodes);
+
+  if (result) {
+    document.getElementById('output').innerText = "The tree is a valid BST!";
+  } else {
+    const invalidNodesList = invalidNodes.map(node => node.value).join(", ");
+    document.getElementById('output').innerText = `The tree is NOT a BST because of nodes: ${invalidNodesList}`;
+  }
+}
+
+async function checkBST(node, min, max, invalidNodes) {
+  if (!node) return true;
+
+  const nodeElem = document.getElementById(`node-${node.value}`);
+
+  // Check BST condition for the current node
+  if (node.value <= min || node.value >= max) {
+    nodeElem.classList.add('error');
+    invalidNodes.push(node); // Add the invalid node to the array
+    return false; // Stop further checks for this branch
+  }
+
+  nodeElem.classList.add('highlight');
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+  // Recursively check left and right subtrees
+  const isLeftBST = await checkBST(node.left, min, node.value, invalidNodes);
+  const isRightBST = await checkBST(node.right, node.value, max, invalidNodes);
+
+  nodeElem.classList.remove('highlight');
+  return isLeftBST && isRightBST;
+}
+</script>
+
+</body>
+</html>

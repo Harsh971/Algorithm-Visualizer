@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tree Traversal Visualizer</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      background-color: #fff;
+      position: relative;
+    }
+    #treeArea {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      overflow: visible;
+    }
+    .node {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+    .highlight {
+      background-color: #FFD700;
+    }
+    .line {
+      position: absolute;
+      background-color: black; /* Set line color to black */
+      height: 2px;
+      transform-origin: top left;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>Tree Traversal Visualizer</h2>
+  <label>Node Value:</label><br>
+  <input type="text" id="nodeValue"><br><br>
+  <label>Parent Node:</label><br>
+  <input type="text" id="parentNode"><br><br>
+  <label>Position (Left/Right):</label><br>
+  <select id="position">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+  </select><br><br>
+  <button onclick="addNode()">Add Node</button>
+  <hr>
+  <button onclick="startTraversal('preorder')">Preorder</button>
+  <button onclick="startTraversal('inorder')">Inorder</button>
+  <button onclick="startTraversal('postorder')">Postorder</button>
+  <hr>
+  <button onclick="validateAndStart()">Start Visualization</button>
+  <div id="output"></div>
+</div>
+
+<div id="visualization">
+  <div id="treeArea"></div>
+</div>
+
+<script>
+  class TreeNode {
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
+  }
+
+  class Tree {
+    constructor() {
+      this.root = null;
+    }
+
+    addNode(value, parentValue, position) {
+      const newNode = new TreeNode(value);
+      if (!this.root) {
+        this.root = newNode;
+        this.displayTree();
+        return;
+      }
+      const parentNode = this.findNode(this.root, parentValue);
+      if (!parentNode) {
+        alert('Parent node not found.');
+        return;
+      }
+      if (position === 'left' && !parentNode.left) {
+        parentNode.left = newNode;
+      } else if (position === 'right' && !parentNode.right) {
+        parentNode.right = newNode;
+      } else {
+        alert('Invalid position or parent already has two children.');
+      }
+      this.displayTree();
+    }
+
+    findNode(node, value) {
+      if (!node) return null;
+      if (node.value === value) return node;
+      return this.findNode(node.left, value) || this.findNode(node.right, value);
+    }
+
+    displayTree() {
+      const treeArea = document.getElementById('treeArea');
+      treeArea.innerHTML = ''; // Clear existing nodes and lines
+      this.renderNode(this.root, treeArea, window.innerWidth / 4, 50, 0);
+    }
+
+    renderNode(node, container, x, y, level) {
+      if (!node) return;
+
+      // Create a div for the node
+      const nodeElem = document.createElement('div');
+      nodeElem.className = 'node';
+      nodeElem.id = `node-${node.value}`;
+      nodeElem.innerText = node.value;
+
+      // Position the node
+      nodeElem.style.left = `${x}px`;
+      nodeElem.style.top = `${y}px`;
+
+      // Append the node element to the container
+      container.appendChild(nodeElem);
+
+      // Calculate positions for children
+      const xOffset = 120 / (level + 1); // Horizontal spread based on depth
+      const yOffset = 80; // Vertical distance between levels
+
+      // Render left child and connect with a line
+      if (node.left) {
+        const childX = x - xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.left, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15); // Draw line to left child
+      }
+      
+      // Render right child and connect with a line
+      if (node.right) {
+        const childX = x + xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.right, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15); // Draw line to right child
+      }
+    }
+
+    drawLine(container, x1, y1, x2, y2) {
+  const line = document.createElement('div');
+  line.className = 'line';
+
+  // Calculate length and angle of the line
+  const totalLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+  // Adjusted length to cut 20% from each side
+  const adjustedLength = totalLength * 0.6; // Keeping only 60% of the line
+
+  // Calculate the angle in radians
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+
+  // Calculate new starting and ending positions based on the adjusted length
+  const startX = x1 + (totalLength * 0.2) * Math.cos(angle); // Move 20% inward from start
+  const startY = y1 + (totalLength * 0.2) * Math.sin(angle);
+  const endX = x2 - (totalLength * 0.2) * Math.cos(angle); // Move 20% inward from end
+  const endY = y2 - (totalLength * 0.2) * Math.sin(angle);
+
+  // Set the line length to the adjusted length
+  line.style.width = `${adjustedLength}px`;
+
+  // Position the line at the calculated start point
+  line.style.left = `${startX}px`;
+  line.style.top = `${startY}px`;
+
+  // Rotate the line to point towards the end point
+  const rotationAngle = angle * (180 / Math.PI); // Convert to degrees
+  line.style.transform = `rotate(${rotationAngle}deg)`;
+
+  // Append the line to the container
+  container.appendChild(line);
+}
+  }
+
+  // Initialize tree instance
+  const tree = new Tree();
+
+  // Add node function for UI interaction
+  function addNode() {
+    const value = document.getElementById('nodeValue').value.trim();
+    const parentValue = document.getElementById('parentNode').value.trim();
+    const position = document.getElementById('position').value;
+
+    if (!value) {
+      alert("Node value can't be empty");
+      return;
+    }
+    if (value === parentValue) {
+      alert("A node can't be its own parent.");
+      return;
+    }
+
+    tree.addNode(value, parentValue, position);
+    document.getElementById('nodeValue').value = '';
+    document.getElementById('parentNode').value = '';
+  }
+
+  function startTraversal(type) {
+  const output = [];
+  if (type === 'preorder') preorderTraversal(tree.root, output);
+  else if (type === 'inorder') inorderTraversal(tree.root, output);
+  else if (type === 'postorder') postorderTraversal(tree.root, output);
+  animateTraversal(output);
+  document.getElementById('output').innerText = `Traversal (${type}): ${output.join(' -> ')}`;
+}
+
+function preorderTraversal(node, output) {
+  if (!node) return;
+  output.push(node.value);
+  preorderTraversal(node.left, output);
+  preorderTraversal(node.right, output);
+}
+
+function inorderTraversal(node, output) {
+  if (!node) return;
+  inorderTraversal(node.left, output);
+  output.push(node.value);
+  inorderTraversal(node.right, output);
+}
+
+function postorderTraversal(node, output) {
+  if (!node) return;
+  postorderTraversal(node.left, output);
+  postorderTraversal(node.right, output);
+  output.push(node.value);
+}
+
+
+  function animateTraversal(order) {
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index >= order.length) {
+        clearInterval(interval);
+        return;
+      }
+      document.querySelectorAll('.node').forEach(node => node.classList.remove('highlight'));
+      const currentNode = document.getElementById(`node-${order[index]}`);
+      if (currentNode) {
+                currentNode.classList.add('highlight');
+      }
+      index++;
+    }, 660); // Interval set to 0.66 seconds for each highlight
+  }
+
+  function validateAndStart() {
+    // Clear any previous traversal highlights
+    document.querySelectorAll('.node').forEach(node => node.classList.remove('highlight'));
+    document.getElementById('output').innerText = "Select a traversal type to begin!";
+  }
+</script>
+
+</body>
+</html>
+
