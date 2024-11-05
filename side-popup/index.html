@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup with Sidebar Navigation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Open Popup Button -->
+    <button id="open-popup" onclick="openPopup()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay" onclick="closePopup()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup">
+        <div class="popup-header">
+            <div class="tab active" onclick="showContent('text1')">Text 1</div>
+            <div class="tab" onclick="showContent('text2')">Text 2</div>
+            <div class="tab" onclick="showContent('text3')">Text 3</div>
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup" onclick="closePopup()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content">
+            <div id="text1" class="content-section active">
+                <h1>This is the content for Text 1.</h1>
+				<!-- Code tab container -->
+            <div class="code-tab-container">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="showCode('cpp')">C++</button>
+                    <button class="tab-button" onclick="showCode('java')">Java</button>
+                    <button class="tab-button" onclick="showCode('python')">Python</button>
+                    <button class="tab-button" onclick="showCode('javascript')">JavaScript</button>
+                </div>
+                <div class="code-display">
+                    <!-- Code snippets for each language -->
+                    <pre id="cpp" class="code-snippet active">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int binarySearch(vector&lt;int&gt;& nums, int low, int high, int target) {
+    if (low &gt; high) return -1; // Base case.
+
+    int mid = (low + high) / 2;
+    if (nums[mid] == target) return mid;
+    else if (target &gt; nums[mid])
+        return binarySearch(nums, mid + 1, high, target);
+    return binarySearch(nums, low, mid - 1, target);
+}
+                    </pre>
+
+                    <pre id="java" class="code-snippet">
+public class BinarySearch {
+    public int binarySearch(int[] nums, int low, int high, int target) {
+        if (low &gt; high) return -1; // Base case.
+
+        int mid = (low + high) / 2;
+        if (nums[mid] == target) return mid;
+        else if (target &gt; nums[mid])
+            return binarySearch(nums, mid + 1, high, target);
+        return binarySearch(nums, low, mid - 1, target);
+    }
+}
+                    </pre>
+
+                    <pre id="python" class="code-snippet">
+def binary_search(nums, low, high, target):
+    if low &gt; high:
+        return -1  # Base case
+
+    mid = (low + high) // 2
+    if nums[mid] == target:
+        return mid
+    elif target &gt; nums[mid]:
+        return binary_search(nums, mid + 1, high, target)
+    return binary_search(nums, low, mid - 1, target)
+                    </pre>
+
+                    <pre id="javascript" class="code-snippet">
+function binarySearch(nums, low, high, target) {
+    if (low &gt; high) return -1; // Base case.
+
+    let mid = Math.floor((low + high) / 2);
+    if (nums[mid] === target) return mid;
+    else if (target &gt; nums[mid])
+        return binarySearch(nums, mid + 1, high, target);
+    return binarySearch(nums, low, mid - 1, target);
+}
+                    </pre>
+                </div>
+                <!-- Copy Button -->
+                <button onclick="copyCode()" class="copy-button">Copy</button>
+            </div>
+            </div>
+            <div id="text2" class="content-section">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3" class="content-section">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
