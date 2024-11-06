@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Visualizer</title>
+    <link rel="stylesheet" href="./delete_node_at_x_pos.css">
+</head>
+<body>
+
+<div class="container">
+    <!-- Sidebar for User Input -->
+    <div class="sidebar">
+        <h2>Algorithm Visualizer</h2>
+        
+        <!-- Input Fields -->
+        <label for="nodeCount">Number of Nodes (n):</label>
+        <input type="number" id="nodeCount" min="1" required>
+        
+        <label for="nodeValues">Nodes (comma-separated):</label>
+        <input type="text" id="nodeValues" placeholder="e.g., 1,2,3,4" required>
+        
+        <label for="position">Position to Delete (x):</label>
+        <input type="number" id="position" required>
+        
+        <!-- Buttons -->
+        <button id="startButton">START</button>
+        <button id="showCodeButton">Show Code</button>
+    </div>
+
+    <!-- Visualizer Area -->
+    <div class="visualizer">
+        <div id="linkedListContainer" class="linked-list-container">
+            <!-- Initial Linked List Displayed Here -->
+        </div>
+        <div id="iterationContainer" class="iteration-container">
+            <!-- Iterative States Displayed Vertically Here -->
+        </div>
+        <p id="statusMessage" class="status-message"></p>
+    </div>
+</div>
+
+<!-- Modal for Code Popup -->
+<div id="codeModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <pre id="codeText">/* C++ Code Here */</pre>
+    </div>
+</div>
+
+<script src="./delete_node_at_x_pos.js"></script>
+</body>
+</html>
