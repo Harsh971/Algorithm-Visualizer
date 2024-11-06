@@ -1,4 +1,3 @@
-// C++ code snippet to be displayed in the popup
 const cppCodeSnippet = `
 #include <iostream>
 using namespace std;
@@ -9,7 +8,6 @@ struct Node {
     Node(int val) : data(val), next(nullptr) {}
 };
 
-// Function to insert a new node at a specific position
 void insertAtPosition(Node*& head, int value, int position) {
     Node* newNode = new Node(value);
     if (position == 1) { 
@@ -17,7 +15,6 @@ void insertAtPosition(Node*& head, int value, int position) {
         head = newNode;
         return;
     }
-
     Node* curr = head;
     Node* prev = nullptr;
     int currPosition = 1;
@@ -35,7 +32,6 @@ void insertAtPosition(Node*& head, int value, int position) {
 }
 `;
 
-// Show code in a popup
 document.getElementById('showCodeButton').addEventListener('click', function() {
     document.getElementById('codeText').textContent = cppCodeSnippet;
     document.getElementById('codeModal').style.display = 'block';
@@ -45,7 +41,6 @@ document.querySelector('.close').onclick = function() {
     document.getElementById('codeModal').style.display = 'none';
 }
 
-// Visualization and Animation Code
 function startVisualizer() {
     const nodeCount = parseInt(document.getElementById('nodeCount').value);
     const nodeValues = document.getElementById('nodeValues').value.split(',').map(Number);
@@ -57,12 +52,20 @@ function startVisualizer() {
         return;
     }
 
+    // Clear previous content to start fresh
+    document.getElementById('linkedListContainer').innerHTML = '';
+    document.getElementById('insertNodeContainer').innerHTML = '';
+    document.getElementById('iterationContainer').innerHTML = '';
+
+    // Display the linked list and separate node to insert
     displayLinkedList(nodeValues);
     displayInsertNode(insertValue);
+    
+    // Start the insertion animation
     animateInsertion(nodeValues, insertValue, position);
 }
 
-// Display linked list
+
 function displayLinkedList(values) {
     const container = document.getElementById('linkedListContainer');
     container.innerHTML = '';
@@ -74,7 +77,6 @@ function displayLinkedList(values) {
     });
 }
 
-// Display standalone insert node
 function displayInsertNode(value) {
     const insertNodeContainer = document.getElementById('insertNodeContainer');
     insertNodeContainer.innerHTML = '';
@@ -84,57 +86,65 @@ function displayInsertNode(value) {
     insertNodeContainer.appendChild(node);
 }
 
-// Animation function
 function animateInsertion(values, newValue, pos) {
     let currentNodeIndex = 0;
-    const container = document.getElementById('linkedListContainer');
-    const nodes = container.getElementsByClassName('node');
-    const statusMessage = document.getElementById('statusMessage');
-    
-    function updatePointers(prev, curr, next) {
+    const iterationContainer = document.getElementById('iterationContainer');
+    const nodes = values.map(value => ({ value, isNew: false }));
+
+    function updateIterationDisplay() {
+        const iterationDiv = document.createElement('div');
+        iterationDiv.classList.add('iteration');
+
+        // Add iteration label
+        const iterationLabel = document.createElement('p');
+        iterationLabel.textContent = `Iteration ${currentNodeIndex + 1}`;
+        iterationLabel.classList.add('iteration-label');
+        iterationDiv.appendChild(iterationLabel);
+
+        // Add nodes in horizontal format
+        nodes.forEach((node, index) => {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.classList.add('node');
+            // Highlight current node
+            if (index === currentNodeIndex && index!==pos-1) nodeDiv.classList.add('highlight');
+            nodeDiv.textContent = node.value;
+            iterationDiv.appendChild(nodeDiv);
+        });
+
+        // Conditionally add new node in the insertion iteration
+        if (currentNodeIndex === pos - 1) {
+            const newNodeDiv = document.createElement('div');
+            newNodeDiv.classList.add('node', 'highlight', 'insert-node');
+            newNodeDiv.textContent = newValue;
+            newNodeDiv.style.backgroundColor = "orange";
+            iterationDiv.insertBefore(newNodeDiv, iterationDiv.children[pos]);
+            nodes.splice(pos - 1, 0, { value: newValue, isNew: true }); // Insert new node in the array
+        }
+
+        // Add status message
+        const statusMessage = document.createElement('div');
+        statusMessage.classList.add('status-message');
         statusMessage.innerHTML = `
-            <p>prev: ${prev ? prev : "NULL"}</p>
-            <p>curr: ${curr ? curr : "NULL"}</p>
-            <p>next: ${next ? next : "NULL"}</p>
+            <p>prev: ${currentNodeIndex > 0 ? nodes[currentNodeIndex - 1].value : "NULL"}</p>
+            <p>curr: ${nodes[currentNodeIndex].value}</p>
+            <p>next: ${currentNodeIndex + 1 < nodes.length ? nodes[currentNodeIndex + 1].value : "NULL"}</p>
         `;
-    }
+        iterationDiv.appendChild(statusMessage);
 
-    function animateStep() {
-        let prev = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1].textContent : null;
-        let curr = currentNodeIndex < nodes.length ? nodes[currentNodeIndex].textContent : null;
-        let next = currentNodeIndex + 1 < nodes.length ? nodes[currentNodeIndex + 1].textContent : null;
-        
-        updatePointers(prev, curr, next);
+        // Add horizontal line for separation
+        const separator = document.createElement('hr');
+        iterationContainer.appendChild(iterationDiv);
+        iterationContainer.appendChild(separator);
 
-        if (currentNodeIndex < pos - 1 && currentNodeIndex < nodes.length) {
-            if (currentNodeIndex > 0) nodes[currentNodeIndex - 1].classList.remove('highlight');
-            nodes[currentNodeIndex].classList.add('highlight');
+        if (currentNodeIndex < pos - 1) {
             currentNodeIndex++;
-            setTimeout(animateStep, 1000);
+            setTimeout(updateIterationDisplay, 1000);
         } else {
-            nodes[currentNodeIndex - 1]?.classList.remove('highlight');
-            insertAtPosition(container, newValue, pos);
-            document.getElementById('insertNodeContainer').innerHTML = '';
-            statusMessage.textContent = `Inserted ${newValue} at position ${pos}`;
+            document.getElementById('insertNodeContainer').innerHTML = ''; // Remove separate insert node after insertion
         }
     }
 
-    animateStep();
-}
-
-// Insert node at position
-function insertAtPosition(container, newValue, pos) {
-    const newNode = document.createElement('div');
-    newNode.classList.add('node', 'insert-node');
-    newNode.textContent = newValue;
-    newNode.style.backgroundColor = "#FFA500"; // Keep inserted node orange
-
-    // Insert at correct position based on index
-    if (pos - 1 < container.children.length) {
-        container.insertBefore(newNode, container.children[pos - 1]);
-    } else {
-        container.appendChild(newNode);  // Append at end if position exceeds length
-    }
+    updateIterationDisplay();
 }
 
 document.getElementById('startButton').addEventListener('click', startVisualizer);
