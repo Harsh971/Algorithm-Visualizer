@@ -106,10 +106,15 @@ function animateDeletion(values, pos) {
         // Add status message
         const statusMessage = document.createElement('div');
         statusMessage.classList.add('status-message');
+        const prevNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+        const currNode = nodes[currentNodeIndex];
+        const nextNode = currentNodeIndex + 1 < nodes.length ? nodes[currentNodeIndex + 1] : null;
+        const nextAfterNextNode = currentNodeIndex + 2 < nodes.length ? nodes[currentNodeIndex + 2] : null;
+
         statusMessage.innerHTML = `
-            <p>prev: ${currentNodeIndex > 0 ? nodes[currentNodeIndex - 1].value : "NULL"}</p>
-            <p>curr: ${currentNodeIndex === pos - 1 ? nodes[currentNodeIndex + 1].value : nodes[currentNodeIndex].value}</p>
-            <p>next: ${currentNodeIndex + 1 < nodes.length ? nodes[currentNodeIndex + 2].value : "NULL"}</p>
+            <p>prev: ${prevNode ? prevNode.value : "NULL"}</p>
+            <p>curr: ${currentNodeIndex === pos - 1 ? (nextNode ? nextNode.value : "NULL") : currNode.value}</p>
+            <p>next: ${nextAfterNextNode ? nextAfterNextNode.value : "NULL"}</p>
         `;
         iterationDiv.appendChild(statusMessage);
 
@@ -124,7 +129,7 @@ function animateDeletion(values, pos) {
         } else {
             // Display updated linked list after deletion, excluding the deleted node
             setTimeout(() => {
-                const modifiedValues = nodes.filter(node => node.value !== nodes[pos - 1].value).map(node => node.value);
+                const modifiedValues = nodes.filter((_, index) => index !== pos - 1).map(node => node.value);
 
                 // Display the deleted node separately
                 const deletedNodeContainer = document.createElement('div');
@@ -135,11 +140,15 @@ function animateDeletion(values, pos) {
                 deletedNodeDiv.textContent = nodes[pos - 1].value;
                 deletedNodeContainer.appendChild(deletedNodeDiv);
                 iterationContainer.appendChild(deletedNodeContainer);
+
+                // Update linked list display after deletion
+                displayLinkedList(modifiedValues, 'linkedListContainer');
             }, 1000);
         }
     }
 
     updateIterationDisplay();
 }
+
 
 document.getElementById('startButton').addEventListener('click', startDeletionVisualizer);
