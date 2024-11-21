@@ -32,13 +32,53 @@ void insertAtPosition(Node*& head, int value, int position) {
 }
 `;
 
-document.getElementById('showCodeButton').addEventListener('click', function() {
+document.getElementById('showCodeButton').addEventListener('click', function () {
     document.getElementById('codeText').textContent = cppCodeSnippet;
     document.getElementById('codeModal').style.display = 'block';
 });
 
-document.querySelector('.close').onclick = function() {
+document.querySelector('.close').onclick = function () {
     document.getElementById('codeModal').style.display = 'none';
+};
+
+function displayErrorPopup(message) {
+    const existingModal = document.getElementById('errorModal');
+    if (existingModal) existingModal.remove(); // Remove any existing modals
+
+    // Create a modal for the error message
+    const modal = document.createElement('div');
+    modal.id = 'errorModal';
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.background = 'white';
+    modal.style.padding = '20px';
+    modal.style.borderRadius = '8px';
+    modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    modal.style.textAlign = 'center';
+    modal.style.zIndex = '1000';
+
+    const modalMessage = document.createElement('p');
+    modalMessage.textContent = message;
+    modalMessage.style.marginBottom = '20px';
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.style.background = '#007BFF';
+    closeButton.style.color = 'white';
+    closeButton.style.border = 'none';
+    closeButton.style.padding = '10px 20px';
+    closeButton.style.borderRadius = '4px';
+    closeButton.style.cursor = 'pointer';
+
+    closeButton.onclick = function () {
+        modal.remove();
+    };
+
+    modal.appendChild(modalMessage);
+    modal.appendChild(closeButton);
+    document.body.appendChild(modal);
 }
 
 function startVisualizer() {
@@ -48,10 +88,13 @@ function startVisualizer() {
     const position = parseInt(document.getElementById('position').value);
 
     if (!nodeCount || nodeValues.length !== nodeCount || isNaN(insertValue) || isNaN(position) || position > nodeCount + 1 || position < 1) {
-        alert("Give proper input");
+        displayErrorPopup("Give proper input");
         return;
     }
 
+    const existingModal = document.getElementById('errorModal');
+    if (existingModal) existingModal.remove(); // Remove any existing modals
+    
     // Clear previous content to start fresh
     document.getElementById('linkedListContainer').innerHTML = '';
     document.getElementById('insertNodeContainer').innerHTML = '';
@@ -60,11 +103,10 @@ function startVisualizer() {
     // Display the linked list and separate node to insert
     displayLinkedList(nodeValues);
     displayInsertNode(insertValue);
-    
+
     // Start the insertion animation
     animateInsertion(nodeValues, insertValue, position);
 }
-
 
 function displayLinkedList(values) {
     const container = document.getElementById('linkedListContainer');
@@ -106,7 +148,7 @@ function animateInsertion(values, newValue, pos) {
             const nodeDiv = document.createElement('div');
             nodeDiv.classList.add('node');
             // Highlight current node
-            if (index === currentNodeIndex && index!==pos-1) nodeDiv.classList.add('highlight');
+            if (index === currentNodeIndex && index !== pos - 1) nodeDiv.classList.add('highlight');
             nodeDiv.textContent = node.value;
             iterationDiv.appendChild(nodeDiv);
         });
@@ -116,7 +158,7 @@ function animateInsertion(values, newValue, pos) {
             const newNodeDiv = document.createElement('div');
             newNodeDiv.classList.add('node', 'highlight', 'insert-node');
             newNodeDiv.textContent = newValue;
-            newNodeDiv.style.backgroundColor = "orange";
+            newNodeDiv.style.backgroundColor = 'orange';
             iterationDiv.insertBefore(newNodeDiv, iterationDiv.children[pos]);
             nodes.splice(pos - 1, 0, { value: newValue, isNew: true }); // Insert new node in the array
         }
