@@ -1,3 +1,107 @@
+
+/* Header Styles */
+header {
+    background: linear-gradient(to right, #268cf9, #7ebef9); /* Starts with bright blue and fades */
+    color: white; /* Ensures text contrasts well */
+    padding: 10px 20px;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
+}
+
+
+.logo {
+    cursor: pointer;
+    height: 60px;
+    width:60px;
+    border-radius: 20px;
+}
+/* General styles for the dropdown */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 18px;
+    font-family:sans-serif;
+}
+
+nav ul li {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color:rgb(223, 229, 246);
+    color: white;
+    list-style: none;
+    padding: 10px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: max-content;
+}
+
+.dropdown-menu li a {
+    color: black;
+    padding: 5px 15px;
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+    background-color: rgb(172, 172, 245);
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-menu {
+    display: block; /* Make visible on hover */
+}
+
+.contactUS{
+    padding: 4px;
+    margin: 4px;
+    font-size: 18px;
+    font-family:sans-serif;
+}
+
+/* .dropdown-menu li a {
+    display: block;
+    padding: 8px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #555;
+} */
+
+/* Adjustments for Container and Sidebar */
+.container {
+    display: flex;
+    height: calc(100vh - 90px); /* Adjust for header height */
+}
+
+.sidebar {
+    width: 30%;
+    padding: 20px;
+    background-color: #f5f5f5;
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.visualizer {
+    width: 70%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
 body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
 .container { display: flex; height: 100vh; }
 
@@ -68,3 +172,4 @@ hr {
     background-color: #ccc;
     margin: 15px 0;
 }
+
