@@ -71,6 +71,13 @@ nav ul li {
     font-family:sans-serif;
 }
 
+.goBack{
+    padding: 4px;
+    margin: 4px;
+    font-size: 18px;
+    font-family:sans-serif;
+}
+
 /* .dropdown-menu li a {
     display: block;
     padding: 8px 20px;
