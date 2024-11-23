@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fibonacci Series Visualizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Left Section: Input and Buttons -->
+    <div class="left-section">
+      <h2>Enter a number (n):</h2>
+      <input type="number" id="inputN" placeholder="Enter n" min="1" />
+      <button id="startBtn">Start Fibonacci Visualization</button>
+      <button id="showCCodeBtn">Show Fibonacci C Code</button>
+    </div>
+
+    <!-- Right Section: Animation -->
+    <div class="right-section">
+      <div id="animationArea"></div>
+    </div>
+  </div>
+
+  <!-- C Code Popup -->
+  <div id="cCodePopup" class="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
+      <h3>Fibonacci C Code</h3>
+      <pre id="cCodeText"></pre>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

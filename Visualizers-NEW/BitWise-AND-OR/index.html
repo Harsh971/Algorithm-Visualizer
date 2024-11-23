@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitwise AND / OR Visualizer</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      position: relative;
+    }
+    .bit {
+      display: inline-block;
+      padding: 5px;
+      font-weight: bold;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+    .highlight-green {
+      background-color: lightgreen;
+    }
+    .highlight-red {
+      background-color: lightcoral;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .binary-number {
+      font-family: monospace;
+      margin: 5px 0;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+    input[type="number"] {
+      width: 50px;
+      margin: 5px;
+    }
+    .integer-input {
+      margin-top: 5px;
+      width: calc(100% - 10px);
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>Bitwise AND / OR Visualizer</h2>
+  <label>Number of Integers (n):</label><br>
+  <input type="number" id="nValue" min="1" value="3" oninput="generateInputFields()"><br><br>
+  <button onclick="generateInputFields()">Enter Numbers</button>
+  <div id="inputFieldsContainer"></div><br>
+  <label>Select Operation:</label><br>
+  <button onclick="startOperation('AND')">AND</button>
+  <button onclick="startOperation('OR')">OR</button>
+  <hr>
+  <div id="output" class="result"></div>
+</div>
+
+<div id="visualization">
+  <div id="binaryDisplay"></div>
+</div>
+
+<script>
+  let integers = [];
+  let operation = '';
+
+  // Generate input fields for entering integers based on n
+  function generateInputFields() {
+    const n = parseInt(document.getElementById('nValue').value);
+    const container = document.getElementById('inputFieldsContainer');
+    container.innerHTML = ''; // Clear any previous inputs
+
+    for (let i = 0; i < n; i++) {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.className = 'integer-input';
+      input.placeholder = `Enter integer ${i + 1}`;
+      container.appendChild(input);
+    }
+  }
+
+  function collectInputs() {
+    const container = document.getElementById('inputFieldsContainer');
+    const inputs = container.querySelectorAll('.integer-input');
+    integers = [];
+
+    inputs.forEach(input => {
+      const value = parseInt(input.value, 10);
+      if (!isNaN(value)) {
+        integers.push(value);
+      }
+    });
+
+    if (integers.length < 2) {
+      alert("Please enter at least two valid numbers.");
+    } else {
+      displayBinary();
+    }
+  }
+
+  function displayBinary() {
+    const binaryDisplay = document.getElementById('binaryDisplay');
+    const binaryIntegers = integers.map(num => num.toString(2).padStart(8, '0')); // 8-bit binary format
+
+    // Clear previous content and generate the binary format for each integer
+    let htmlContent = '';
+    for (let binary of binaryIntegers) {
+      htmlContent += `<div class="binary-number">${binary.split('').map(bit => `<span class="bit">${bit}</span>`).join('')}</div>`;
+    }
+    binaryDisplay.innerHTML = htmlContent;
+  }
+
+  function startOperation(op) {
+    operation = op;
+    collectInputs(); // Collect inputs before starting the operation
+
+    if (integers.length < 2) {
+      return; // Exit if there aren't enough valid integers
+    }
+
+    animateBitwiseOperation();
+  }
+
+  function animateBitwiseOperation() {
+    const binaryIntegers = integers.map(num => num.toString(2).padStart(8, '0')); // 8-bit binary
+    const bitsLength = binaryIntegers[0].length; // Number of bits to iterate through
+
+    let resultBits = Array(bitsLength).fill(operation === 'AND' ? '1' : '0'); // Start with '1' for AND, '0' for OR
+
+    const output = document.getElementById('output');
+    output.innerHTML = `Performing ${operation} operation step-by-step...`;
+
+    let step = 0;
+
+    function highlightColumn() {
+      if (step >= bitsLength) {
+        // Display final result
+        output.innerHTML = `Result: ${parseInt(resultBits.join(''), 2)} (Binary: ${resultBits.join('')})`;
+        return;
+      }
+
+      // Clear previous highlights
+      document.querySelectorAll('.bit').forEach(el => el.classList.remove('highlight-green', 'highlight-red'));
+
+      // Collect bits at the current position from each integer
+      let columnBits = binaryIntegers.map(binary => binary[step]);
+
+      // Determine color based on the operation and bits in the column
+      let colorClass;
+      if (operation === 'AND') {
+        if (columnBits.every(bit => bit === '1')) {
+          resultBits[step] = '1';
+          colorClass = 'highlight-green';
+        } else {
+          resultBits[step] = '0';
+          colorClass = 'highlight-red';
+        }
+      } else if (operation === 'OR') {
+        if (columnBits.some(bit => bit === '1')) {
+          resultBits[step] = '1';
+          colorClass = 'highlight-green';
+        } else {
+          resultBits[step] = '0';
+          colorClass = 'highlight-red';
+        }
+      }
+
+      // Highlight bits in the current column with the determined color
+      binaryIntegers.forEach((binary, index) => {
+        const bitElem = document.querySelectorAll('.binary-number')[index].children[step];
+        bitElem.classList.add(colorClass);
+      });
+
+      step++;
+      setTimeout(highlightColumn, 1000); // Delay for animation effect
+    }
+
+    highlightColumn();
+  }
+</script>
+
+</body>
+</html>

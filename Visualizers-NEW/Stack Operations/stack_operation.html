@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Operation Visualizer</title>
+    <link rel="stylesheet" href="stack_operation.css">
+</head>
+<body>
+    <div id="input-section">
+        <h2>Stack Operation Visualizer</h2>
+        <label for="stack-size">Max Number of Elements (n):</label>
+        <input type="number" id="stack-size" min="1"><br><br>
+
+        <label for="stack-value">Value to Push:</label>
+        <input type="number" id="stack-value"><br><br>
+
+        <button onclick="pushToStack()">Push</button>
+        <button onclick="popFromStack()">Pop</button>
+        <button onclick="showSize()">Size</button>
+        <button onclick="checkEmpty()">Empty</button><br><br>
+        
+        <button onclick="showCode()">Show Code</button>
+        <div class="code-snippet" id="code-snippet"></div>
+    </div>
+
+    <div id="visualizer-section">
+        <div id="stack-visual"></div>
+    </div>
+
+    <script src="stack_operation.js"></script>
+</body>
+</html>

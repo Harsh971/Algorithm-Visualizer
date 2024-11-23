@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dijkstra Visualizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f7fa;
+    }
+    .container {
+      display: flex;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 1200px;
+      width: 90%;
+      gap: 20px;
+    }
+    .input-section {
+      flex: 1;
+      min-width: 250px;
+    }
+    .input-section h2, .input-section h3 {
+      font-size: 1.2em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .input-section label {
+      font-weight: bold;
+      display: block;
+      margin: 8px 0 4px;
+    }
+    .input-section input, .input-section button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .input-section button {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .input-section button:hover {
+      background-color: #2980b9;
+    }
+    .canvas-section {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    canvas {
+      border: 1px solid #ddd;
+      background-color: #f8f9fb;
+      border-radius: 8px;
+    }
+    #result {
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      margin-top: 10px;
+    }
+    #edge-list {
+      max-height: 100px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 5px;
+      border-radius: 4px;
+      background-color: #f8f8f8;
+    }
+    .edge-entry {
+      font-size: 0.9em;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+    .edge-entry button {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      margin-left: 10px;
+    }
+    .edge-entry button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="input-section">
+      <h2>Graph Input</h2>
+      <label for="nodes">Number of Nodes (n):</label>
+      <input type="number" id="nodes" placeholder="Enter number of nodes">
+      
+      <label for="edge-input">Edges (start - end - weight):</label>
+      <input type="text" id="edge-input" placeholder="e.g., 1-2">
+      <input type="number" id="weight" placeholder="weight">
+      <button id="add-edge">Add Edge</button>
+      
+      <h3>Added Edges:</h3>
+      <div id="edge-list"></div>
+      
+      <label for="start-vertex">Starting Vertex:</label>
+      <input type="number" id="start-vertex" placeholder="Enter start vertex">
+      
+      <label for="end-vertex">Ending Vertex:</label>
+      <input type="number" id="end-vertex" placeholder="Enter end vertex">
+      
+      <button id="start-visualizer">Generate Nodes</button>
+      <button id="find-path">Start</button>
+      
+      <h3 id="result"></h3>
+    </div>
+    
+    <div class="canvas-section">
+      <canvas id="visualizer-canvas"></canvas>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

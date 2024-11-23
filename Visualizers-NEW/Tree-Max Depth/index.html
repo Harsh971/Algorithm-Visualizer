@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tree Max Depth Visualizer with Edges and Animation</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      position: relative;
+    }
+    #treeArea {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      overflow: visible;
+    }
+    .node {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+    .highlight {
+      background-color: #FFD700; /* Highlighted nodes will turn yellow */
+    }
+    .line {
+      position: absolute;
+      background-color: #000;
+      height: 2px;
+      transform-origin: top left;
+    }
+    .level-label {
+  position: absolute;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  left: -10px; /* Move this value to position the labels further left */
+  text-align: right; /* Align the text to the right */
+  width: 80px; /* Adjust width if necessary to fit "LEVEL {i}" */
+}
+
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>Tree Max Depth Visualizer</h2>
+  <label>Node Value:</label><br>
+  <input type="text" id="nodeValue"><br><br>
+  <label>Parent Node:</label><br>
+  <input type="text" id="parentNode"><br><br>
+  <label>Position (Left/Right):</label><br>
+  <select id="position">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+  </select><br><br>
+  <button onclick="addNode()">Add Node</button>
+  <hr>
+  <button onclick="findMaxDepth()">Find Max Depth</button>
+  <div id="output"></div>
+</div>
+
+<div id="visualization">
+  <div id="treeArea"></div>
+</div>
+
+<script>
+  class TreeNode {
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
+  }
+
+  class Tree {
+    constructor() {
+      this.root = null;
+    }
+
+    addNode(value, parentValue, position) {
+      const newNode = new TreeNode(value);
+      if (!this.root) {
+        this.root = newNode;
+        this.displayTree();
+        return;
+      }
+      const parentNode = this.findNode(this.root, parentValue);
+      if (!parentNode) {
+        alert('Parent node not found.');
+        return;
+      }
+      if (position === 'left' && !parentNode.left) {
+        parentNode.left = newNode;
+      } else if (position === 'right' && !parentNode.right) {
+        parentNode.right = newNode;
+      } else {
+        alert('Invalid position or parent already has two children.');
+      }
+      this.displayTree();
+    }
+
+    findNode(node, value) {
+      if (!node) return null;
+      if (node.value === value) return node;
+      return this.findNode(node.left, value) || this.findNode(node.right, value);
+    }
+
+    displayTree() {
+      const treeArea = document.getElementById('treeArea');
+      treeArea.innerHTML = ''; // Clear existing nodes and lines
+      this.renderNode(this.root, treeArea, window.innerWidth / 4, 50, 0);
+    }
+
+    renderNode(node, container, x, y, level) {
+      if (!node) return;
+
+      // Create the node element
+      const nodeElem = document.createElement('div');
+      nodeElem.className = 'node';
+      nodeElem.id = `node-${node.value}`;
+      nodeElem.innerText = node.value;
+      nodeElem.style.left = `${x}px`;
+      nodeElem.style.top = `${y}px`;
+      container.appendChild(nodeElem);
+
+      // Create level label if it doesn't exist
+      if (!document.getElementById(`level-label-${level + 1}`)) {
+        const levelLabel = document.createElement('div');
+        levelLabel.className = 'level-label';
+        levelLabel.id = `level-label-${level + 1}`;
+        levelLabel.style.top = `${y}px`;
+        levelLabel.innerText = `LEVEL ${level + 1}`;
+        container.appendChild(levelLabel);
+      }
+
+      const xOffset = 120 / (level + 1);
+      const yOffset = 80;
+
+      // Render left child
+      if (node.left) {
+        const childX = x - xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.left, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15); // draw line to left child
+      }
+
+      // Render right child
+      if (node.right) {
+        const childX = x + xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.right, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15); // draw line to right child
+      }
+    }
+
+    drawLine(container, x1, y1, x2, y2) {
+      const line = document.createElement('div');
+      line.className = 'line';
+
+      // Calculate length and angle of the line
+      const totalLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+      // Adjusted length to cut 20% from each side
+      const adjustedLength = totalLength * 0.6; // Keeping only 60% of the line
+
+      // Calculate the angle in radians
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+
+      // Calculate new starting and ending positions based on the adjusted length
+      const startX = x1 + (totalLength * 0.2) * Math.cos(angle); // Move 20% inward from start
+      const startY = y1 + (totalLength * 0.2) * Math.sin(angle);
+      const endX = x2 - (totalLength * 0.2) * Math.cos(angle); // Move 20% inward from end
+      const endY = y2 - (totalLength * 0.2) * Math.sin(angle);
+
+      // Set the line length to the adjusted length
+      line.style.width = `${adjustedLength}px`;
+
+      // Position the line at the calculated start point
+      line.style.left = `${startX}px`;
+      line.style.top = `${startY}px`;
+
+      // Rotate the line to point towards the end point
+      const rotationAngle = angle * (180 / Math.PI); // Convert to degrees
+      line.style.transform = `rotate(${rotationAngle}deg)`;
+
+      // Append the line to the container
+      container.appendChild(line);
+    }
+  }
+
+  const tree = new Tree();
+
+  function addNode() {
+    const value = document.getElementById('nodeValue').value.trim();
+    const parentValue = document.getElementById('parentNode').value.trim();
+    const position = document.getElementById('position').value;
+
+    if (!value) {
+      alert("Node value can't be empty");
+      return;
+    }
+    if (value === parentValue) {
+      alert("A node can't be its own parent.");
+      return;
+    }
+
+    tree.addNode(value, parentValue, position);
+    document.getElementById('nodeValue').value = '';
+    document.getElementById('parentNode').value = '';
+  }
+
+  function findMaxDepth() {
+    document.getElementById('output').innerText = "Calculating max depth...";
+    let maxDepth = 0;
+    const queue = [[tree.root, 1]];
+
+    const interval = setInterval(() => {
+      if (queue.length === 0) {
+        clearInterval(interval);
+        document.getElementById('output').innerText = `Max Depth of Tree: ${maxDepth}`;
+        return;
+      }
+
+      const [currentNode, depth] = queue.shift();
+
+      if (currentNode) {
+        maxDepth = Math.max(maxDepth, depth);
+
+        // Highlight the current node in the traversal
+        document.querySelectorAll('.node').forEach(node => node.classList.remove('highlight'));
+        const nodeElem = document.getElementById(`node-${currentNode.value}`);
+        if (nodeElem) nodeElem.classList.add('highlight');
+
+        // Add child nodes to the queue for breadth-first traversal
+        queue.push([currentNode.left, depth + 1]);
+        queue.push([currentNode.right, depth + 1]);
+      }
+    }, 1000);
+  }
+</script>
+
+</body>
+</html>
+

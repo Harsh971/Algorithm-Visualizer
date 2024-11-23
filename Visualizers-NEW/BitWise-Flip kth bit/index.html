@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-th Bit Flipping Visualizer</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      position: relative;
+    }
+    .bit {
+      display: inline-block;
+      padding: 5px;
+      font-weight: bold;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+    .highlight-green {
+      background-color: lightgreen;
+    }
+    .highlight-red {
+      background-color: lightcoral;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .binary-number {
+      font-family: monospace;
+      margin: 5px 0;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+    input[type="number"] {
+      width: 100%;
+      margin: 5px 0;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>K-th Bit Flipping Visualizer</h2>
+  <label>Enter Decimal Number:</label><br>
+  <input type="number" id="decimalNumber" placeholder="Enter a decimal number"><br><br>
+  <label>Enter K (Position):</label><br>
+  <input type="number" id="kValue" placeholder="Enter the bit position (k)"><br><br>
+  <label>Select Side:</label><br>
+  <button onclick="startConversion('MSB')">From MSB</button>
+  <button onclick="startConversion('LSB')">From LSB</button>
+  <hr>
+  <div id="output" class="result"></div>
+</div>
+
+<div id="visualization">
+  <div id="binaryDisplay"></div>
+</div>
+
+<script>
+  function displayBinary(binaryString, callback) {
+    const binaryDisplay = document.getElementById('binaryDisplay');
+    binaryDisplay.innerHTML = ''; // Clear previous content
+
+    // Show each bit one-by-one to animate the binary conversion
+    let i = 0;
+    function showNextBit() {
+      if (i < binaryString.length) {
+        const bitSpan = document.createElement('span');
+        bitSpan.className = 'bit';
+        bitSpan.textContent = binaryString[i];
+        binaryDisplay.appendChild(bitSpan);
+        i++;
+        setTimeout(showNextBit, 300); // Delay for each bit
+      } else if (callback) {
+        callback(); // Call the callback once the animation is complete
+      }
+    }
+    showNextBit();
+  }
+
+  function startConversion(fromSide) {
+    const decimalNumber = parseInt(document.getElementById('decimalNumber').value);
+    const k = parseInt(document.getElementById('kValue').value);
+
+    if (isNaN(decimalNumber) || isNaN(k) || k < 1) {
+      alert("Please enter a valid decimal number and a positive integer for K.");
+      return;
+    }
+
+    // Convert the decimal number to binary string
+    const binaryString = decimalNumber.toString(2);
+    const output = document.getElementById('output');
+    output.innerHTML = `Converting ${decimalNumber} to binary...`;
+
+    // Start the binary display with animation, then find and flip the k-th bit
+    displayBinary(binaryString, () => flipKthBit(binaryString, fromSide, k, decimalNumber));
+  }
+
+  function flipKthBit(binaryString, fromSide, k, originalDecimal) {
+    let bitPosition;
+    if (fromSide === 'MSB') {
+      bitPosition = k - 1; // Counting from the left (MSB side)
+    } else {
+      bitPosition = binaryString.length - k; // Counting from the right (LSB side)
+    }
+
+    const output = document.getElementById('output');
+    const bits = document.querySelectorAll('.bit');
+
+    // Clear previous highlights
+    bits.forEach(bit => bit.classList.remove('highlight-green', 'highlight-red'));
+
+    if (bitPosition >= 0 && bitPosition < binaryString.length) {
+      // Get the current value of the k-th bit
+      const currentBit = binaryString[bitPosition];
+      const newBit = currentBit === '1' ? '0' : '1';
+
+      // Highlight the bit before flipping
+      bits[bitPosition].classList.add(currentBit === '1' ? 'highlight-green' : 'highlight-red');
+
+      // Flip the bit in the binary string
+      const flippedBinaryArray = binaryString.split('');
+      flippedBinaryArray[bitPosition] = newBit;
+      const newBinaryString = flippedBinaryArray.join('');
+      
+      // Calculate the new decimal value after flipping the bit
+      const newDecimal = parseInt(newBinaryString, 2);
+
+      // Display results
+      setTimeout(() => {
+        bits[bitPosition].classList.toggle('highlight-green', newBit === '1');
+        bits[bitPosition].classList.toggle('highlight-red', newBit === '0');
+        bits[bitPosition].textContent = newBit;
+
+        output.innerHTML = `
+          Original Decimal: ${originalDecimal} <br>
+          Original K-th Bit (${fromSide} side): ${currentBit} <br>
+          New K-th Bit: ${newBit} <br>
+          New Decimal After Flip: ${newDecimal}
+        `;
+      }, 500); // Delay for the flip effect
+    } else {
+      output.innerHTML = `The specified position (K=${k}) is out of range for the binary representation.`;
+    }
+  }
+</script>
+
+</body>
+</html>

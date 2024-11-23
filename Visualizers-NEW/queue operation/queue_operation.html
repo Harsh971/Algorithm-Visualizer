@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Operation Visualizer</title>
+    <link rel="stylesheet" href="queue_operation.css">
+</head>
+<body>
+    <div id="input-section">
+        <h2>Queue Operation Visualizer</h2>
+        <label for="queue-size">Max Number of Elements (n):</label>
+        <input type="number" id="queue-size" min="1"><br><br>
+
+        <label for="queue-value">Value to Enqueue:</label>
+        <input type="number" id="queue-value"><br><br>
+
+        <button onclick="enqueueToQueue()">Enqueue</button>
+        <button onclick="dequeueFromQueue()">Dequeue</button>
+        <button onclick="showSize()">Size</button>
+        <button onclick="checkEmpty()">Empty</button><br><br>
+
+        <button onclick="showCode()">Show Code</button>
+    </div>
+
+    <div id="visualizer-section">
+        <div id="queue-visual"></div>
+        <div id="output-log"></div>
+    </div>
+
+    <!-- Code Modal -->
+    <div id="code-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeCodeModal()">&times;</span>
+            <pre id="code-snippet"></pre>
+        </div>
+    </div>
+
+    <script src="queue_operation.js"></script>
+</body>
+</html>

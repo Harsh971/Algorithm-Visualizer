@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factorial Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section: Input and Buttons -->
+        <div class="input-section">
+            <h2>Factorial Visualizer</h2>
+            <label for="factorialInput">Enter a number (n):</label>
+            <input type="number" id="factorialInput" min="0" placeholder="Enter a number">
+            <button id="startAnimation">Start Visualization</button>
+            <button id="showCCode">Visualize C Code</button>
+        </div>
+
+        <!-- Right Section: Factorial Animation -->
+        <div class="visualization-section">
+            <h2>Factorial Calculation Steps</h2>
+            <div id="visualizationContainer"></div>
+        </div>
+    </div>
+
+    <!-- C Code Popup Modal -->
+    <div id="cCodeModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <pre id="cCodeContent">
+#include &lt;stdio.h&gt;
+
+int factorial(int n) {
+    if(n == 0) return 1;
+    return n * factorial(n-1);
+}
+
+int main() {
+    int n = 5; // This will be replaced dynamically
+    printf("Factorial of %d is %d", n, factorial(n));
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
