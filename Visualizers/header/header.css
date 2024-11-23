@@ -1,0 +1,67 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+/* Header Styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: white; /* White theme */
+    border: 3px solid rgba(0, 0, 255, 0.4); /* Semi-transparent blue border */
+    border-radius: 20px; /* Curved corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo Container */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Logo Image */
+.logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circular logo */
+    border: 2px solid pink; /* Pink border for the logo */
+    background-color: darkred; /* Dark red theme for the logo */
+    object-fit: cover; /* Ensure the image fits well */
+}
+
+/* Logo Text */
+.logo-text{
+    font-size: 1.5rem;
+    margin-left: 10px;
+    color: darkred; /* Dark red text theme */
+    font-weight: bold;
+}
+
+/* Button Styling */
+.header-button {
+    background-color: darkred; /* Dark red background */
+    color: white; /* White text */
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: 2px solid pink; /* Pink border */
+    border-radius: 20px; /* Curved button corners */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Button Hover Effect */
+.header-button:hover {
+    background-color: #c11a1a; /* Slightly lighter red on hover */
+    transform: scale(1.05); /* Subtle zoom effect */
+}
