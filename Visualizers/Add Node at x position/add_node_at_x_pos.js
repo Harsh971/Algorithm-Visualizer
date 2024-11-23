@@ -42,10 +42,11 @@ document.querySelector('.close').onclick = function () {
 };
 
 function displayErrorPopup(message) {
+    // Remove any existing error modal
     const existingModal = document.getElementById('errorModal');
-    if (existingModal) existingModal.remove(); // Remove any existing modals
+    if (existingModal) existingModal.remove();
 
-    // Create a modal for the error message
+    // Create the error modal
     const modal = document.createElement('div');
     modal.id = 'errorModal';
     modal.style.position = 'fixed';
@@ -55,14 +56,19 @@ function displayErrorPopup(message) {
     modal.style.background = 'white';
     modal.style.padding = '20px';
     modal.style.borderRadius = '8px';
+    modal.style.border = '2px solid #FF0000'; // Red border for a clear indication of error
     modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
     modal.style.textAlign = 'center';
     modal.style.zIndex = '1000';
 
+    // Create the error message
     const modalMessage = document.createElement('p');
     modalMessage.textContent = message;
     modalMessage.style.marginBottom = '20px';
+    modalMessage.style.color = '#FF0000'; // Red text to emphasize the error message
+    modalMessage.style.fontWeight = 'bold';
 
+    // Create the close button
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Close';
     closeButton.style.background = '#007BFF';
@@ -72,14 +78,17 @@ function displayErrorPopup(message) {
     closeButton.style.borderRadius = '4px';
     closeButton.style.cursor = 'pointer';
 
+    // Close button event
     closeButton.onclick = function () {
         modal.remove();
     };
 
+    // Append elements to modal
     modal.appendChild(modalMessage);
     modal.appendChild(closeButton);
     document.body.appendChild(modal);
 }
+
 
 function startVisualizer() {
     const nodeCount = parseInt(document.getElementById('nodeCount').value);
