@@ -765,3 +765,32 @@ button:hover {
     min-height: 50px; /* Minimum height for the list */
     margin-top: 10px; /* Space between the list and other elements */
 }
+/* Square Button Styles */
+.square-button {
+    position: fixed; /* Fix the button at the top-right corner */
+    top: 10px;
+    right: 10px;
+    width: 50px; /* Set the size of the button */
+    height: 50px;
+    background-color: #E85674; /* Blue background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; /* Slightly rounded corners */
+    text-decoration: none; /* Remove underline from anchor */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for depth */
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+/* Home Icon Styles */
+.square-button .home-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: white; /* White color for the icon */
+}
+
+/* Hover Effect */
+.square-button:hover {
+    background-color: #F99E9F; /* Change to green on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}

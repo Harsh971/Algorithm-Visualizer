@@ -660,10 +660,47 @@
   50% { background-position: 400% 0; }
   100% { background-position: 0 0; }
 }
+
+/* Square Button Styles */
+.square-button {
+    position: fixed; /* Fix the button at the top-right corner */
+    top: 10px;
+    right: 10px;
+    width: 50px; /* Set the size of the button */
+    height: 50px;
+    background-color: #E85674; /* Blue background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; /* Slightly rounded corners */
+    text-decoration: none; /* Remove underline from anchor */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for depth */
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+/* Home Icon Styles */
+.square-button .home-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: white; /* White color for the icon */
+}
+
+/* Hover Effect */
+.square-button:hover {
+    background-color: #F99E9F; /* Change to green on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
   </style>
 </head>
 <body>
-
+    <a href="#" class="square-button" style="width:100px; height:60px;" class="home-button">
+        <svg style="margin-left:30px; margin-top:25px; stroke: white;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7"></path>
+            <path d="M9 22V12h6v10"></path>
+            <path d="M22 9.5V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5"></path>
+        </svg>
+        </a>
 <div id="controls">
   <h2>Tree Traversal Visualizer</h2>
   <label>Node Value:</label><br>
