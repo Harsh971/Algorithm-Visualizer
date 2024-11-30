@@ -1,0 +1,767 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Main container */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Input section (left) */
+.input-section {
+  width: 30%;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
+}
+
+.input-section h2 {
+  margin-bottom: 20px;
+}
+
+.input-section label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-section input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+#edges-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.edge-input {
+  margin-bottom: 5px;
+}
+
+/* Visualization section (right) */
+.visualization-section {
+  width: 70%;
+  display: flex;
+  flex-direction: column;  /* Allows stacking of the canvas and the result message */
+  justify-content: center;
+  align-items: center;
+  background-color: #e9ecef;
+  position: relative;
+  padding: 20px;
+}
+
+#visualizer-canvas {
+  width: 80%;          /* Set width to a percentage of the parent container */
+  height: 80%;         /* Set height to a percentage of the parent container */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 20px; /* Add spacing between canvas and result message */
+}
+
+/* Result message styling */
+#result-message {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+/* Popup styles */
+#popup {
+  position: fixed;           /* Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;               /* Ensure it's on top of other content */
+}
+
+#popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff; /* White background for visibility */
+    display: block;
+}
+
+
+
+/* Open Popup Button Styling */
+#open-popup {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#popup.active {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto; /* Three tabs + space for close button */
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center; /* Center items vertically */
+}
+
+/* Tab Style */
+.tab {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: #e0e0e0;
+}
+
+.tab.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content {
+    overflow-y: auto;
+    max-height: 80%;
+    padding: 20px;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Show active content section */
+.content-section.active {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content {
+    position: relative;
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.code-snippet.active {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button:hover {
+    background-color: #FF7777;
+}
+
+/* Open Popup Button Styling */
+#open-popup-o {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay-o {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay-o.active-o {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup-o {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: auto;
+}
+
+#popup-o.active-o {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header-o {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center;
+}
+
+/* Tab Style */
+.tab-o {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab-o:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content-o {
+    
+    max-height: 80%;
+	width: 60%;
+	margin-right:-100px;
+   left: -200px;
+   box-sizing:border-box;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section-o {
+    opacity: 0;
+    display: none;
+	width:150%;
+    transition: opacity 0.3s ease;
+	
+}
+
+/* Show active content section */
+.content-section-o.active-o {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content-o::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content-o::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content-o::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup-o {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button-o {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup-o {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content-o {
+    position: relative;
+    max-width: 800px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+	
+	
+}
+
+/* Close button */
+.close-button-o {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container-o {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+	width :100%;
+}
+
+.tabs-o {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button-o {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button-o:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display-o {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet-o {
+    display: none;
+    margin: 0;
+    padding: 0;
+    color: #000000; /* Black text for the snippets */
+    background-color: #ffffff; /* Ensure snippets also have white background */
+}
+
+.code-snippet-o.active-o {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button-o {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button-o:hover {
+    background-color: #FF7777;
+}
+
+.container-eg-btn-3 {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 10px;
+  padding: .5em;
+  line-height: normal;
+}
+.container-eg-btn-3 .butto {
+  color: #fff;
+  margin: 20px;
+  padding: 12px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  transition: .3s;
+  z-index: 1;
+  background: #E85674;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.container-eg-btn-3 .button-1:hover {
+  box-shadow: 0 0.6em 0.5em -0.4em #fa4343;
+  transform: translateY(-0.25em);
+  background: #fa4343;
+}
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+
+
+
+
+
+
+
+/* General container for input fields */
+.input-section {
+    width: 30%; /* Limit the width of the section */
+    float: left; /* Float the section to the left */
+    padding: 20px; /* Add padding for inner spacing */
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+/* Input Fields Styling */
+#nodes, .edge-input, #start-node {
+    border: none; /* Remove default borders */
+    border-bottom: 2px solid red; /* Red bottom border */
+    outline: none; /* Remove outline when focused */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Text color */
+    font-size: 16px; /* Readable font size */
+    padding: 5px; /* Add padding for spacing */
+    width: 100%; /* Make input fields responsive */
+    margin-bottom: 15px; /* Space between inputs */
+}
+
+/* Placeholder Styling */
+#nodes::placeholder, .edge-input::placeholder, #start-node::placeholder {
+    color: red; /* Placeholder text color */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+/* Focus State */
+#nodes:focus, .edge-input:focus, #start-node:focus {
+    border-bottom: 2px solid red; /* Maintain red bottom border on focus */
+}
+
+/* Button Styling */
+button {
+    background-color: red; /* Initial button background */
+    color: white; /* Text color */
+    border: none; /* Remove default borders */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Comfortable padding */
+    font-size: 16px; /* Font size for readability */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+    margin-top: 10px; /* Add space above buttons */
+}
+
+/* Button Hover Effect */
+button:hover {
+    background-color: darkred; /* Darker red on hover */
+    transform: translateY(-3px) scale(1.05); /* Slight zoom and upward movement */
+}
+
+/* Container for added edges */
+#edge-list {
+    border: 1px solid #ddd; /* Light border around the list */
+    padding: 10px; /* Padding for spacing */
+    min-height: 50px; /* Minimum height for the list */
+    margin-top: 10px; /* Space between the list and other elements */
+}

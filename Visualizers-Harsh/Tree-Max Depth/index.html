@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tree Max Depth Visualizer with Edges and Animation</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      position: relative;
+    }
+    #treeArea {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      overflow: visible;
+    }
+    .node {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+    .highlight {
+      background-color: #FFD700; /* Highlighted nodes will turn yellow */
+    }
+    .line {
+      position: absolute;
+      background-color: #000;
+      height: 2px;
+      transform-origin: top left;
+    }
+    .level-label {
+  position: absolute;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  left: -10px; /* Move this value to position the labels further left */
+  text-align: right; /* Align the text to the right */
+  width: 80px; /* Adjust width if necessary to fit "LEVEL {i}" */
+}
+
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+	/* Open Popup Button Styling */
+#open-popup {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#popup.active {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto; /* Three tabs + space for close button */
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center; /* Center items vertically */
+}
+
+/* Tab Style */
+.tab {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: #e0e0e0;
+}
+
+.tab.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content {
+    overflow-y: auto;
+    max-height: 80%;
+    padding: 20px;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Show active content section */
+.content-section.active {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content {
+    position: relative;
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.code-snippet.active {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button:hover {
+    background-color: #FF7777;
+}
+
+/* Open Popup Button Styling */
+#open-popup-o {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay-o {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay-o.active-o {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup-o {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: auto;
+}
+
+#popup-o.active-o {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header-o {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center;
+}
+
+/* Tab Style */
+.tab-o {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab-o:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content-o {
+    
+    max-height: 80%;
+	width: 60%;
+	margin-right:-100px;
+   left: -200px;
+   box-sizing:border-box;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section-o {
+    opacity: 0;
+    display: none;
+	width:150%;
+    transition: opacity 0.3s ease;
+	
+}
+
+/* Show active content section */
+.content-section-o.active-o {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content-o::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content-o::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content-o::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup-o {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button-o {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup-o {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content-o {
+    position: relative;
+    max-width: 800px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+	
+	
+}
+
+/* Close button */
+.close-button-o {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container-o {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+	width :100%;
+}
+
+.tabs-o {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button-o {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button-o:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display-o {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet-o {
+    display: none;
+    margin: 0;
+    padding: 0;
+    color: #000000; /* Black text for the snippets */
+    background-color: #ffffff; /* Ensure snippets also have white background */
+}
+
+.code-snippet-o.active-o {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button-o {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button-o:hover {
+    background-color: #FF7777;
+}
+.container-eg-btn-3 {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 10px;
+  padding: .5em;
+  line-height: normal;
+}
+.container-eg-btn-3 .butto {
+  color: #fff;
+  margin: 20px;
+  padding: 12px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  transition: .3s;
+  z-index: 1;
+  background: #E85674;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.container-eg-btn-3 .button-1:hover {
+  box-shadow: 0 0.6em 0.5em -0.4em #fa4343;
+  transform: translateY(-0.25em);
+  background: #fa4343;
+}
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+
+
+/* General input styling */
+input, select {
+    border: none;
+    border-bottom: 2px solid red; /* Red bottom border */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Black text */
+    font-size: 16px; /* Font size */
+    padding: 8px 10px; /* Padding for input fields */
+    width: 100%; /* Full width input */
+    margin-bottom: 15px; /* Space between input fields */
+    outline: none; /* Remove default outline */
+}
+
+/* Placeholder text styling */
+input::placeholder, select::placeholder {
+    color: red; /* Red placeholder text */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+/* Focused input styling */
+input:focus, select:focus {
+    border-bottom: 2px solid red; /* Red bottom border when focused */
+}
+
+/* Styling for labels */
+label {
+    font-weight: bold;
+    color: black;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Container for the buttons */
+.container-eg-btn-3 {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap if the container is small */
+}
+
+/* Button styling */
+button {
+    background-color: red; /* Initial red background */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Button padding */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: darkred; /* Darker red on hover */
+    transform: translateY(-3px) scale(1.05); /* Slight zoom and move up effect */
+}
+
+/* Horizontal line styling */
+hr {
+    margin: 20px 0; /* Add margin around horizontal line */
+}
+
+
+
+/* General input styling */
+input, select {
+    border: none;
+    border-bottom: 2px solid red; /* Red bottom border */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Black text */
+    font-size: 16px; /* Font size */
+    padding: 8px 10px; /* Padding for input fields */
+    width: 100%; /* Full width input */
+    margin-bottom: 15px; /* Space between input fields */
+    outline: none; /* Remove default outline */
+}
+
+/* Placeholder text styling */
+input::placeholder, select::placeholder {
+    color: red; /* Red placeholder text */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+/* Focused input styling */
+input:focus, select:focus {
+    border-bottom: 2px solid red; /* Red bottom border when focused */
+}
+
+/* Styling for labels */
+label {
+    font-weight: bold;
+    color: black;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Container for the buttons */
+.container-eg-btn-3 {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap if the container is small */
+}
+
+/* Button styling */
+button {
+    background-color: red; /* Initial red background */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Button padding */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: darkred; /* Darker red on hover */
+    transform: translateY(-3px) scale(1.05); /* Slight zoom and move up effect */
+}
+
+/* Horizontal line styling */
+hr {
+    margin: 20px 0; /* Add margin around horizontal line */
+}
+
+
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>Tree Max Depth Visualizer</h2>
+  <label>Node Value:</label><br>
+  <input type="text" id="nodeValue"><br><br>
+  <label>Parent Node:</label><br>
+  <input type="text" id="parentNode"><br><br>
+  <label>Position (Left/Right):</label><br>
+  <select id="position">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+  </select><br><br>
+  <div class="container-eg-btn-3">
+			<button class="butto button-1" onclick="addNode()">Add Node</button>
+</div>
+  
+  <hr>
+  <div class="container-eg-btn-3">
+			<button class="butto button-1" onclick="findMaxDepth()">Find Max Depth</button>
+</div>
+  
+  <div id="output"></div>
+</div>
+
+<div id="visualization">
+  <div id="treeArea"></div>
+</div>
+
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Max Depth</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Find Max Depth of a Tree</h1>
+				<h4>The maximum depth (or height) of a binary tree is the longest path from the root node to a leaf node. The depth of a binary tree with just one node is 1, and an empty tree has a depth of 0.</h4>
+				
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('k-o')">Recursive Approach</button>
+                        <button class="tab-button-o" onclick="showCode_o('p-o')">Itterative Approach</button>
+                        
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="k-o" class="code-snippet-o active-o">
+o	The maximum depth of a node is 1 plus the maximum depth of its left and right subtrees.
+o	Recursively calculate the maximum depth of both left and right subtrees, then take the greater of the two depths.
+o	This approach is very intuitive and works well with the binary tree structure.
+
+
+
+                        </pre>
+
+                        <pre id="p-o" class="code-snippet-o">
+o	Using a queue, we traverse each level of the tree. Each level we traverse adds 1 to the depth.
+o	This approach works by level, and the depth is simply the number of levels traversed.
+
+
+                        </pre>
+
+                       
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				<h4><pre>
+				
+The time complexity of this recursive approach is O(n), where n is the number of nodes in the binary tree, because each node is visited once
+
+				</pre></h4>
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+using namespace std;
+
+class TreeNode {
+public:
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int val) {
+        value = val;
+        left = right = nullptr;
+    }
+};
+
+int maxDepth(TreeNode* root) {
+    if (root == nullptr) {
+        return 0;
+    }
+
+    // Recursively find the maximum depth of left and right subtrees
+    int leftDepth = maxDepth(root->left);
+    int rightDepth = maxDepth(root->right);
+
+    // Return the greater of the two depths plus 1
+    return max(leftDepth, rightDepth) + 1;
+}
+
+int main() {
+    // Creating a sample binary tree
+    TreeNode* root = new TreeNode(1);
+    root->left = new TreeNode(2);
+    root->right = new TreeNode(3);
+    root->left->left = new TreeNode(4);
+    root->left->right = new TreeNode(5);
+    root->left->left->left = new TreeNode(6);
+
+    cout << "Max depth: " << maxDepth(root) << endl;  // Output: 4
+    return 0;
+}
+
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+class TreeNode {
+    int value;
+    TreeNode left, right;
+
+    TreeNode(int value) {
+        this.value = value;
+        left = right = null;
+    }
+}
+
+public class MaxDepth {
+
+    public static int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        // Recursively find the maximum depth of left and right subtrees
+        int leftDepth = maxDepth(root.left);
+        int rightDepth = maxDepth(root.right);
+        
+        // Return the greater of the two depths plus 1
+        return Math.max(leftDepth, rightDepth) + 1;
+    }
+
+    public static void main(String[] args) {
+        // Creating a sample binary tree
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        root.left.left = new TreeNode(4);
+        root.left.right = new TreeNode(5);
+        root.left.left.left = new TreeNode(6);
+
+        System.out.println("Max depth: " + maxDepth(root));  // Output: 4
+    }
+}
+
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+class TreeNode:
+    def __init__(self, value=0, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+def max_depth(root):
+
+    if root is None:
+        return 0
+    
+    # Recursively find the maximum depth of left and right subtrees
+    left_depth = max_depth(root.left)
+    right_depth = max_depth(root.right)
+    
+    # Return the greater of the two depths plus 1
+    return max(left_depth, right_depth) + 1
+
+# Example usage
+if __name__ == "__main__":
+    # Creating a sample binary tree
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
+    root.left.left.left = TreeNode(6)
+
+    print("Max depth:", max_depth(root))  # Output: 4
+
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+<script>
+  class TreeNode {
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
+  }
+
+  class Tree {
+    constructor() {
+      this.root = null;
+    }
+
+    addNode(value, parentValue, position) {
+      const newNode = new TreeNode(value);
+      if (!this.root) {
+        this.root = newNode;
+        this.displayTree();
+        return;
+      }
+      const parentNode = this.findNode(this.root, parentValue);
+      if (!parentNode) {
+        alert('Parent node not found.');
+        return;
+      }
+      if (position === 'left' && !parentNode.left) {
+        parentNode.left = newNode;
+      } else if (position === 'right' && !parentNode.right) {
+        parentNode.right = newNode;
+      } else {
+        alert('Invalid position or parent already has two children.');
+      }
+      this.displayTree();
+    }
+
+    findNode(node, value) {
+      if (!node) return null;
+      if (node.value === value) return node;
+      return this.findNode(node.left, value) || this.findNode(node.right, value);
+    }
+
+    displayTree() {
+      const treeArea = document.getElementById('treeArea');
+      treeArea.innerHTML = ''; // Clear existing nodes and lines
+      this.renderNode(this.root, treeArea, window.innerWidth / 4, 50, 0);
+    }
+
+    renderNode(node, container, x, y, level) {
+      if (!node) return;
+
+      // Create the node element
+      const nodeElem = document.createElement('div');
+      nodeElem.className = 'node';
+      nodeElem.id = `node-${node.value}`;
+      nodeElem.innerText = node.value;
+      nodeElem.style.left = `${x}px`;
+      nodeElem.style.top = `${y}px`;
+      container.appendChild(nodeElem);
+
+      // Create level label if it doesn't exist
+      if (!document.getElementById(`level-label-${level + 1}`)) {
+        const levelLabel = document.createElement('div');
+        levelLabel.className = 'level-label';
+        levelLabel.id = `level-label-${level + 1}`;
+        levelLabel.style.top = `${y}px`;
+        levelLabel.innerText = `LEVEL ${level + 1}`;
+        container.appendChild(levelLabel);
+      }
+
+      const xOffset = 120 / (level + 1);
+      const yOffset = 80;
+
+      // Render left child
+      if (node.left) {
+        const childX = x - xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.left, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15); // draw line to left child
+      }
+
+      // Render right child
+      if (node.right) {
+        const childX = x + xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.right, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15); // draw line to right child
+      }
+    }
+
+    drawLine(container, x1, y1, x2, y2) {
+      const line = document.createElement('div');
+      line.className = 'line';
+
+      // Calculate length and angle of the line
+      const totalLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+      // Adjusted length to cut 20% from each side
+      const adjustedLength = totalLength * 0.6; // Keeping only 60% of the line
+
+      // Calculate the angle in radians
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+
+      // Calculate new starting and ending positions based on the adjusted length
+      const startX = x1 + (totalLength * 0.2) * Math.cos(angle); // Move 20% inward from start
+      const startY = y1 + (totalLength * 0.2) * Math.sin(angle);
+      const endX = x2 - (totalLength * 0.2) * Math.cos(angle); // Move 20% inward from end
+      const endY = y2 - (totalLength * 0.2) * Math.sin(angle);
+
+      // Set the line length to the adjusted length
+      line.style.width = `${adjustedLength}px`;
+
+      // Position the line at the calculated start point
+      line.style.left = `${startX}px`;
+      line.style.top = `${startY}px`;
+
+      // Rotate the line to point towards the end point
+      const rotationAngle = angle * (180 / Math.PI); // Convert to degrees
+      line.style.transform = `rotate(${rotationAngle}deg)`;
+
+      // Append the line to the container
+      container.appendChild(line);
+    }
+  }
+
+  const tree = new Tree();
+
+  function addNode() {
+    const value = document.getElementById('nodeValue').value.trim();
+    const parentValue = document.getElementById('parentNode').value.trim();
+    const position = document.getElementById('position').value;
+
+    if (!value) {
+      alert("Node value can't be empty");
+      return;
+    }
+    if (value === parentValue) {
+      alert("A node can't be its own parent.");
+      return;
+    }
+
+    tree.addNode(value, parentValue, position);
+    document.getElementById('nodeValue').value = '';
+    document.getElementById('parentNode').value = '';
+  }
+
+  function findMaxDepth() {
+    document.getElementById('output').innerText = "Calculating max depth...";
+    let maxDepth = 0;
+    const queue = [[tree.root, 1]];
+
+    const interval = setInterval(() => {
+      if (queue.length === 0) {
+        clearInterval(interval);
+        document.getElementById('output').innerText = `Max Depth of Tree: ${maxDepth}`;
+        return;
+      }
+
+      const [currentNode, depth] = queue.shift();
+
+      if (currentNode) {
+        maxDepth = Math.max(maxDepth, depth);
+
+        // Highlight the current node in the traversal
+        document.querySelectorAll('.node').forEach(node => node.classList.remove('highlight'));
+        const nodeElem = document.getElementById(`node-${currentNode.value}`);
+        if (nodeElem) nodeElem.classList.add('highlight');
+
+        // Add child nodes to the queue for breadth-first traversal
+        queue.push([currentNode.left, depth + 1]);
+        queue.push([currentNode.right, depth + 1]);
+      }
+    }, 1000);
+  }
+  // Function to copy the code to clipboard
+function copyCode() {
+    const activeSnippet = document.querySelector('.code-snippet.active');
+    if (activeSnippet) {
+        const code = activeSnippet.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('Code copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+    }
+}
+
+function openPopup_o() {
+    document.getElementById("overlay-o").classList.add("active-o");
+    document.getElementById("popup-o").classList.add("active-o");
+}
+
+function closePopup_o() {
+    document.getElementById("overlay-o").classList.remove("active-o");
+    document.getElementById("popup-o").classList.remove("active-o");
+}
+
+function showContent_o(contentId) {
+    const sections = document.querySelectorAll('.content-section-o');
+    const tabs = document.querySelectorAll('.tab-o');
+
+    sections.forEach(section => {
+        section.classList.remove('active-o');
+    });
+
+    tabs.forEach(tab => {
+        tab.classList.remove('active-o');
+    });
+
+    document.getElementById(contentId).classList.add('active-o');
+    document.querySelector(`.tab-o[onclick="showContent_o('${contentId}')"]`).classList.add('active-o');
+}
+
+// Function to show code based on selected language
+function showCode_o(language) {
+    // Remove 'active-o' class from all buttons and code snippets
+    const buttons = document.querySelectorAll('.tab-button-o');
+    const snippets = document.querySelectorAll('.code-snippet-o');
+    
+    buttons.forEach(button => button.classList.remove('active-o'));
+    snippets.forEach(snippet => snippet.classList.remove('active-o'));
+
+    // Add 'active-o' class to selected language button and code snippet
+    document.querySelector(`[onclick="showCode_o('${language}')"]`).classList.add('active-o');
+    document.getElementById(language).classList.add('active-o');
+}
+
+// Function to copy the code to clipboard
+function copyCode_o() {
+    const activeSnippet = document.querySelector('.code-snippet-o.active-o');
+    if (activeSnippet) {
+        const code = activeSnippet.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('Code copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+    }
+}
+
+</script>
+
+</body>
+</html>
+

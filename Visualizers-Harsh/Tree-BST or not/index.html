@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BST Validator Visualizer</title>
+  <style>
+    body {
+      display: flex;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #controls {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    #visualization {
+      width: 70%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      position: relative;
+    }
+    #treeArea {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      overflow: visible;
+    }
+    .node {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+    .highlight {
+      background-color: #FFD700;
+    }
+    .error {
+      background-color: #FF6347; /* Red for nodes violating BST rules */
+    }
+    .line {
+      position: absolute;
+      background-color: #000;
+      height: 2px;
+      transform-origin: top left;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+	/* Open Popup Button Styling */
+#open-popup {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#popup.active {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto; /* Three tabs + space for close button */
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center; /* Center items vertically */
+}
+
+/* Tab Style */
+.tab {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: #e0e0e0;
+}
+
+.tab.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content {
+    overflow-y: auto;
+    max-height: 80%;
+    padding: 20px;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Show active content section */
+.content-section.active {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content {
+    position: relative;
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.code-snippet.active {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button:hover {
+    background-color: #FF7777;
+}
+
+/* Open Popup Button Styling */
+#open-popup-o {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay-o {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay-o.active-o {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup-o {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: auto;
+}
+
+#popup-o.active-o {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header-o {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center;
+}
+
+/* Tab Style */
+.tab-o {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab-o:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content-o {
+    
+    max-height: 80%;
+	width: 60%;
+	margin-right:-100px;
+   left: -200px;
+   box-sizing:border-box;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section-o {
+    opacity: 0;
+    display: none;
+	width:150%;
+    transition: opacity 0.3s ease;
+	
+}
+
+/* Show active content section */
+.content-section-o.active-o {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content-o::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content-o::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content-o::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup-o {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button-o {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup-o {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content-o {
+    position: relative;
+    max-width: 800px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+	
+	
+}
+
+/* Close button */
+.close-button-o {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container-o {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+	width :100%;
+}
+
+.tabs-o {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button-o {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button-o:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display-o {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet-o {
+    display: none;
+    margin: 0;
+    padding: 0;
+    color: #000000; /* Black text for the snippets */
+    background-color: #ffffff; /* Ensure snippets also have white background */
+}
+
+.code-snippet-o.active-o {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button-o {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button-o:hover {
+    background-color: #FF7777;
+}
+.container-eg-btn-3 {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 10px;
+  padding: .5em;
+  line-height: normal;
+}
+.container-eg-btn-3 .butto {
+  color: #fff;
+  margin: 20px;
+  padding: 12px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  transition: .3s;
+  z-index: 1;
+  background: #E85674;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.container-eg-btn-3 .button-1:hover {
+  box-shadow: 0 0.6em 0.5em -0.4em #fa4343;
+  transform: translateY(-0.25em);
+  background: #fa4343;
+}
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+
+
+
+/* General input styling */
+input, select {
+    border: none;
+    border-bottom: 2px solid red; /* Red bottom border */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Black text */
+    font-size: 16px; /* Font size */
+    padding: 8px 10px; /* Padding for input fields */
+    width: 100%; /* Full width input */
+    margin-bottom: 15px; /* Space between input fields */
+    outline: none; /* Remove default outline */
+}
+
+/* Placeholder text styling */
+input::placeholder, select::placeholder {
+    color: red; /* Red placeholder text */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+/* Focused input styling */
+input:focus, select:focus {
+    border-bottom: 2px solid red; /* Red bottom border when focused */
+}
+
+/* Styling for labels */
+label {
+    font-weight: bold;
+    color: black;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Container for the buttons */
+.container-eg-btn-3 {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap if the container is small */
+}
+
+/* Button styling */
+button {
+    background-color: red; /* Initial red background */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Button padding */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: darkred; /* Darker red on hover */
+    transform: translateY(-3px) scale(1.05); /* Slight zoom and move up effect */
+}
+
+/* Horizontal line styling */
+hr {
+    margin: 20px 0; /* Add margin around horizontal line */
+}
+
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <h2>BST Validator Visualizer</h2>
+  <label>Node Value:</label><br>
+  <input type="text" id="nodeValue"><br><br>
+  <label>Parent Node:</label><br>
+  <input type="text" id="parentNode"><br><br>
+  <label>Position (Left/Right):</label><br>
+  <select id="position">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+  </select><br><br>
+  <div class="container-eg-btn-3">
+			<button class="butto button-1" onclick="addNode()">Add Node</button>
+</div>
+  
+  <hr>
+  <div class="container-eg-btn-3">
+			<button class="butto button-1" onclick="validateBST()">Check if Tree is BST</button>
+</div>
+ 
+  <div id="output"></div>
+</div>
+
+<div id="visualization">
+  <div id="treeArea"></div>
+</div>
+
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">BST Validator</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Check if Generated Tree is a BST or Not ?</h1>
+				<h4>A tree is a BST if for every node, all values in its left subtree are smaller, and all values in its right subtree are larger.</h4>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Algorithm</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+1. Perform an in-order traversal of the tree.
+2. Check if the elements visited are in strictly increasing order.
+		OR
+   Use a recursive function that checks the validity of the current node's value within a valid range (min, max) defined by its ancestors.
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				<h4><pre>
+				
+Time Complexity:
+O(n), where n is the number of nodes in the tree (visits each node once).
+
+Space Complexity: 
+O(h), where h is the height of the tree (stack space for recursion).
+
+				</pre></h4>
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+#include <climits>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+bool isBSTUtil(Node* root, int min, int max) {
+    if (!root) return true; // Empty tree is a BST
+    if (root->data <= min || root->data >= max) return false;
+    return isBSTUtil(root->left, min, root->data) && isBSTUtil(root->right, root->data, max);
+}
+
+bool isBST(Node* root) {
+    return isBSTUtil(root, INT_MIN, INT_MAX);
+}
+
+int main() {
+    Node* root = new Node(10);
+    root->left = new Node(5);
+    root->right = new Node(20);
+
+    cout << (isBST(root) ? "Tree is BST" : "Tree is not BST") << endl;
+    return 0;
+}
+
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+class Node {
+    int data;
+    Node left, right;
+    Node(int val) {
+        data = val;
+        left = right = null;
+    }
+}
+
+public class Main {
+    static boolean isBSTUtil(Node root, int min, int max) {
+        if (root == null) return true; // Empty tree is a BST
+        if (root.data <= min || root.data >= max) return false;
+        return isBSTUtil(root.left, min, root.data) && isBSTUtil(root.right, root.data, max);
+    }
+
+    static boolean isBST(Node root) {
+        return isBSTUtil(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    public static void main(String[] args) {
+        Node root = new Node(10);
+        root.left = new Node(5);
+        root.right = new Node(20);
+
+        System.out.println(isBST(root) ? "Tree is BST" : "Tree is not BST");
+    }
+}
+
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_bst_util(root, min_val, max_val):
+    if root is None:
+        return True  # Empty tree is a BST
+    if root.data <= min_val or root.data >= max_val:
+        return False
+    return (is_bst_util(root.left, min_val, root.data) and
+            is_bst_util(root.right, root.data, max_val))
+
+def is_bst(root):
+    return is_bst_util(root, float('-inf'), float('inf'))
+
+# Example usage
+root = Node(10)
+root.left = Node(5)
+root.right = Node(20)
+
+print("Tree is BST" if is_bst(root) else "Tree is not BST")
+
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+<script>
+  class TreeNode {
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
+  }
+
+  class Tree {
+    constructor() {
+      this.root = null;
+    }
+
+    addNode(value, parentValue, position) {
+      const newNode = new TreeNode(value);
+      if (!this.root) {
+        this.root = newNode;
+        this.displayTree();
+        return;
+      }
+      const parentNode = this.findNode(this.root, parentValue);
+      if (!parentNode) {
+        alert('Parent node not found.');
+        return;
+      }
+      if (position === 'left' && !parentNode.left) {
+        parentNode.left = newNode;
+      } else if (position === 'right' && !parentNode.right) {
+        parentNode.right = newNode;
+      } else {
+        alert('Invalid position or parent already has two children.');
+      }
+      this.displayTree();
+    }
+
+    findNode(node, value) {
+      if (!node) return null;
+      if (node.value === value) return node;
+      return this.findNode(node.left, value) || this.findNode(node.right, value);
+    }
+
+    displayTree() {
+      const treeArea = document.getElementById('treeArea');
+      treeArea.innerHTML = ''; // Clear existing nodes and lines
+      this.renderNode(this.root, treeArea, window.innerWidth / 4, 50, 0);
+    }
+
+    renderNode(node, container, x, y, level) {
+      if (!node) return;
+
+      const nodeElem = document.createElement('div');
+      nodeElem.className = 'node';
+      nodeElem.id = `node-${node.value}`;
+      nodeElem.innerText = node.value;
+      nodeElem.style.left = `${x}px`;
+      nodeElem.style.top = `${y}px`;
+
+      container.appendChild(nodeElem);
+
+      const xOffset = 120 / (level + 1);
+      const yOffset = 80;
+
+      if (node.left) {
+        const childX = x - xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.left, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15);
+      }
+      
+      if (node.right) {
+        const childX = x + xOffset;
+        const childY = y + yOffset;
+        this.renderNode(node.right, container, childX, childY, level + 1);
+        this.drawLine(container, x + 15, y + 15, childX + 15, childY + 15);
+      }
+    }
+
+    drawLine(container, x1, y1, x2, y2) {
+      const line = document.createElement('div');
+      line.className = 'line';
+
+      const totalLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      const adjustedLength = totalLength * 0.6; // Adjusted to 60% of full length
+
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+
+      // Calculate new starting and ending points for the shortened line
+      const startX = x1 + (totalLength * 0.2) * Math.cos(angle);
+      const startY = y1 + (totalLength * 0.2) * Math.sin(angle);
+      const endX = x2 - (totalLength * 0.2) * Math.cos(angle);
+      const endY = y2 - (totalLength * 0.2) * Math.sin(angle);
+
+      // Set the line length and position it at the calculated start point
+      line.style.width = `${adjustedLength}px`;
+      line.style.left = `${startX}px`;
+      line.style.top = `${startY}px`;
+
+      // Rotate the line to match the angle between start and end points
+      const rotationAngle = angle * (180 / Math.PI);
+      line.style.transform = `rotate(${rotationAngle}deg)`;
+
+      container.appendChild(line);
+    }
+  }
+
+  const tree = new Tree();
+
+  function addNode() {
+    const value = parseInt(document.getElementById('nodeValue').value.trim(), 10);
+    const parentValue = parseInt(document.getElementById('parentNode').value.trim(), 10);
+    const position = document.getElementById('position').value;
+
+    if (isNaN(value)) {
+      alert("Node value must be a number");
+      return;
+    }
+    if (value === parentValue) {
+      alert("A node can't be its own parent.");
+      return;
+    }
+
+    tree.addNode(value, parentValue, position);
+    document.getElementById('nodeValue').value = '';
+    document.getElementById('parentNode').value = '';
+  }
+
+  async function validateBST() {
+  document.getElementById('output').innerText = "Checking if the tree is a BST...";
+  const invalidNodes = []; // Array to keep track of nodes that violate BST rules
+  const result = await checkBST(tree.root, -Infinity, Infinity, invalidNodes);
+
+  if (result) {
+    document.getElementById('output').innerText = "The tree is a valid BST!";
+  } else {
+    const invalidNodesList = invalidNodes.map(node => node.value).join(", ");
+    document.getElementById('output').innerText = `The tree is NOT a BST because of nodes: ${invalidNodesList}`;
+  }
+}
+
+async function checkBST(node, min, max, invalidNodes) {
+  if (!node) return true;
+
+  const nodeElem = document.getElementById(`node-${node.value}`);
+
+  // Check BST condition for the current node
+  if (node.value <= min || node.value >= max) {
+    nodeElem.classList.add('error');
+    invalidNodes.push(node); // Add the invalid node to the array
+    return false; // Stop further checks for this branch
+  }
+
+  nodeElem.classList.add('highlight');
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+  // Recursively check left and right subtrees
+  const isLeftBST = await checkBST(node.left, min, node.value, invalidNodes);
+  const isRightBST = await checkBST(node.right, node.value, max, invalidNodes);
+
+  nodeElem.classList.remove('highlight');
+  return isLeftBST && isRightBST;
+}
+// Function to copy the code to clipboard
+function copyCode() {
+    const activeSnippet = document.querySelector('.code-snippet.active');
+    if (activeSnippet) {
+        const code = activeSnippet.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('Code copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+    }
+}
+
+function openPopup_o() {
+    document.getElementById("overlay-o").classList.add("active-o");
+    document.getElementById("popup-o").classList.add("active-o");
+}
+
+function closePopup_o() {
+    document.getElementById("overlay-o").classList.remove("active-o");
+    document.getElementById("popup-o").classList.remove("active-o");
+}
+
+function showContent_o(contentId) {
+    const sections = document.querySelectorAll('.content-section-o');
+    const tabs = document.querySelectorAll('.tab-o');
+
+    sections.forEach(section => {
+        section.classList.remove('active-o');
+    });
+
+    tabs.forEach(tab => {
+        tab.classList.remove('active-o');
+    });
+
+    document.getElementById(contentId).classList.add('active-o');
+    document.querySelector(`.tab-o[onclick="showContent_o('${contentId}')"]`).classList.add('active-o');
+}
+
+// Function to show code based on selected language
+function showCode_o(language) {
+    // Remove 'active-o' class from all buttons and code snippets
+    const buttons = document.querySelectorAll('.tab-button-o');
+    const snippets = document.querySelectorAll('.code-snippet-o');
+    
+    buttons.forEach(button => button.classList.remove('active-o'));
+    snippets.forEach(snippet => snippet.classList.remove('active-o'));
+
+    // Add 'active-o' class to selected language button and code snippet
+    document.querySelector(`[onclick="showCode_o('${language}')"]`).classList.add('active-o');
+    document.getElementById(language).classList.add('active-o');
+}
+
+// Function to copy the code to clipboard
+function copyCode_o() {
+    const activeSnippet = document.querySelector('.code-snippet-o.active-o');
+    if (activeSnippet) {
+        const code = activeSnippet.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('Code copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+    }
+}
+
+</script>
+
+</body>
+</html>

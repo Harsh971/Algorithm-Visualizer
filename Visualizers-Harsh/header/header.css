@@ -1,0 +1,118 @@
+/* General Reset */
+body, html, ul, li, p, h1, h2, h3, h4, h5, h6, a {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+/* Header Container */
+.header-container-final {
+    position: fixed; /* Fix the header to the top */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white; /* Background of header */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    border-radius: 50px; /* Rounded corners for the container */
+    padding: 10px 30px; /* Padding inside the header */
+    max-width: 800px; /* Limit the width of the header */
+    width: 90%; /* Make it responsive */
+    z-index: 1000; /* Ensure it stays on top */
+	margin-top:1%;
+}
+
+/* Logo */
+.logo-final {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+}
+
+.logo-icon-final {
+    font-size: 20px; /* Adjust icon size */
+    color: #ef7e81; /* Pinkish-red color */
+}
+
+.logo-text-final {
+    font-size: 20px; /* Adjust text size */
+    font-weight: bold;
+    color: #ef7e81; /* Pinkish-red color */
+}
+
+/* Navigation Links */
+.nav-links-final {
+    display: flex;
+    gap: 20px; /* Space between links */
+}
+
+.nav-item-final {
+    text-decoration: none; /* Remove underline */
+    font-size: 16px; /* Link font size */
+    color: #666; /* Gray color for links */
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+}
+
+.nav-item-final:hover {
+    color: #ef7e81; /* Change to pinkish-red on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-container-final {
+        padding: 10px 20px;
+    }
+
+    .nav-links-final {
+        gap: 10px;
+    }
+
+    .logo-text-final {
+        font-size: 18px;
+    }
+}
+
+
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Square Button Styles */
+.square-button {
+    position: fixed; /* Fix the button at the top-right corner */
+    top: 10px;
+    right: 10px;
+    width: 50px; /* Set the size of the button */
+    height: 50px;
+    background-color: blue; /* Blue background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; /* Slightly rounded corners */
+    text-decoration: none; /* Remove underline from anchor */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow for depth */
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+/* Home Icon Styles */
+.square-button .home-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: white; /* White color for the icon */
+}
+
+/* Hover Effect */
+.square-button:hover {
+    background-color: green; /* Change to green on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+

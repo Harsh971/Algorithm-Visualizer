@@ -1,0 +1,139 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+}
+.input-section {
+  width: 300px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-right: 20px;
+}
+.input-section h2, .input-section h3 {
+  margin-top: 0;
+}
+.canvas-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e3e9ef;
+  border-radius: 8px;
+}
+canvas {
+  background-color: white;
+  border: 1px solid #ccc;
+}
+button {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2980b9;
+}
+#edge-list {
+  margin-top: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 5px;
+  background-color: #f9f9f9;
+}
+.edge-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.edge-entry button {
+  background-color: #e74c3c;
+  padding: 4px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.edge-entry button:hover {
+  background-color: #c0392b;
+}
+
+
+
+
+/* General Label Styling */
+label {
+    font-size: 16px; /* Readable font size */
+    color: black; /* Default label color */
+    display: block; /* Ensure labels appear on their own line */
+    margin-bottom: 5px; /* Space between label and input */
+}
+
+/* Input Field Styling */
+#nodes, #edge-input, #weight, #start-vertex, #end-vertex {
+    border: none; /* Remove default border */
+    border-bottom: 2px solid red; /* Add red bottom border */
+    outline: none; /* Remove focus outline */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Text color for user input */
+    font-size: 16px; /* Make text legible */
+    padding: 5px; /* Comfortable padding */
+    width: 100%; /* Responsive input fields */
+    margin-bottom: 15px; /* Space between input fields */
+}
+
+/* Placeholder Styling */
+#nodes::placeholder, #edge-input::placeholder, #weight::placeholder, 
+#start-vertex::placeholder, #end-vertex::placeholder {
+    color: red; /* Placeholder text color */
+    font-style: italic; /* Optional: Italicize the placeholder */
+}
+
+/* Focus State Styling */
+#nodes:focus, #edge-input:focus, #weight:focus, #start-vertex:focus, #end-vertex:focus {
+    border-bottom: 2px solid red; /* Keep red bottom border on focus */
+}
+
+/* Button Styling */
+#add-edge {
+    background-color: red; /* Button background */
+    color: white; /* Button text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Comfortable padding */
+    font-size: 16px; /* Text size for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    margin-top: 10px; /* Space above the button */
+}
+
+#add-edge:hover {
+    background-color: darkred; /* Slightly darker red on hover */
+}
+
+/* Edge List Container */
+#edge-list {
+    margin-top: 10px; /* Space above the edge list */
+    padding: 10px; /* Padding around the list */
+    background-color: #f9f9f9; /* Light background for distinction */
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Smaller text size */
+    color: black; /* Text color */
+}
+

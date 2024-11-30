@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Visualizer</title>
+    <link rel="stylesheet" href="./add_node_at_x_pos.css">
+</head>
+<body>
+
+<header class="header-container-final">
+        <div class="logo-final">
+            <span class="logo-icon-final">üçÉ</span> <!-- Replace with an actual logo image or SVG if needed -->
+            <span class="logo-text-final">Nika</span>
+        </div>
+        <nav class="nav-links-final">
+            <a href="#" class="nav-item-final">Home</a>
+            <a href="#" class="nav-item-final">Algorithms</a>
+            <a href="#" class="nav-item-final">Contact</a>
+        </nav>
+    </header>
+
+<div class="container">
+    <!-- Sidebar for User Input -->
+    <div class="sidebar">
+        <h2>Add Node in Linked List</h2>
+        
+        <!-- Input Fields -->
+		
+        <label for="nodeCount">Number of Nodes (n):</label>
+        <input type="number" id="nodeCount" min="1" required>
+        
+        <label for="nodeValues">Nodes (comma-separated):</label>
+        <input type="text" id="nodeValues" placeholder="e.g., 1,2,3,4" required>
+        
+        <label for="insertValue">Node Value to Insert:</label>
+        <input type="number" id="insertValue" required>
+        
+        <label for="position">Position (x):</label>
+        <input type="number" id="position" required>
+        
+        <!-- Buttons -->
+		<div class="container-eg-btn-3">
+			<button id="startButton" class="butto button-1">START</button>
+			<!--<button id="showCodeButton" class="butto button-1">Show Code</button>-->
+		</div>
+    </div>
+
+    <!-- Visualizer Area -->
+    <div class="visualizer">
+        <div id="linkedListContainer" class="linked-list-container">
+            <!-- Initial Linked List Displayed Here -->
+        </div>
+        <div id="insertNodeContainer" class="insert-node-container">
+            <!-- Separate Node to Insert Displayed Here -->
+        </div>
+        <div id="iterationContainer" class="iteration-container">
+            <!-- Iterative States Displayed Vertically Here -->
+        </div>
+        <p id="statusMessage" class="status-message"></p>
+    </div>
+</div>
+
+<!-- Modal for Code Popup -->
+<div id="codeModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <pre id="codeText">/* C++ Code Here */</pre>
+    </div>
+</div>
+
+<!-- Custom Pop-up for Errors -->
+<div id="errorPopup" class="popup">
+    <div class="popup-content">
+        <p id="popupMessage">Invalid input</p>
+        <button id="closePopup">OK</button>
+    </div>
+</div>
+
+<!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Add Node at a Position in LinkedList</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o" >
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Steps to Add an Element at Position X</h1>
+				<!--<h5>Binary Search finds the index of a target element in a sorted array. If the element is found, it returns the index; otherwise, it returns -1.</h5>-->
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Steps</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+1.	Create a New Node: Initialize a new node with the given value.
+2.	Check Position Validity:
+	o	If X is less than 0, it is an invalid position.
+	o	If X is 0, insert the new node at the beginning of the list.
+3.	Traverse the List:
+	o	Start from the head of the list and iterate through the nodes until you reach the position X-1.
+	o	If X exceeds the length of the list, you can append the new node at the end.
+4.	Insert the New Node:
+	o	Adjust the pointers to insert the new node at the desired position.
+
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				<h4><pre>
+				
+ï	Time Complexity: <b>O(n)</b>, where n is the number of nodes in the linked list.
+	o	Reason: In the worst case, you may need to traverse the entire list to find the correct position to insert the new node.
+
+
+				</pre></h4>
+				
+				
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+
+<script src="./add_node_at_x_pos.js"></script>
+</body>
+</html>

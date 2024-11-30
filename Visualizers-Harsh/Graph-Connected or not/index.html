@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Connectivity Visualizer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Left Sidebar for Inputs -->
+    <div class="input-section" style="width: 30%; float: left; padding: 20px;">
+      <h2>Graph Input</h2>
+      <label for="nodes">Number of Nodes (n):</label>
+      <input type="number" id="nodes" min="1" required><br><br>
+      
+      <label for="edges">Edges (start - end):</label>
+      <div id="edges-container">
+        <input type="text" class="edge-input" placeholder="e.g., 1-2" required>
+      </div>
+      
+      <button id="add-edge">Add Edge</button><br><br>
+      
+      <!-- New section to display the list of added edges -->
+      <h3>Added Edges:</h3>
+      <div id="edge-list" style="border: 1px solid #ddd; padding: 10px; min-height: 50px;"></div><br>
+
+      <button id="start-visualizer">Check</button>
+    </div>
+
+    <!-- Right Section for Animation/Visualizer -->
+    <div class="visualization-section" style="width: 70%; height: 100vh; float: right; padding: 20px; box-sizing: border-box;">
+      <canvas id="visualizer-canvas"></canvas>
+      <div id="result-message" style="text-align: center; margin-top: 20px; font-size: 18px;"></div>
+    </div>
+  </div>
+  
+  <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Graph Connectivity</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Check if Graph is Connected or Not</h1>
+				<br>
+				<h3>To determine if a graph is connected, we can use BFS (Breadth-First Search) to traverse 
+				the graph and check if all nodes are reachable from a starting node. 
+				If all nodes are visited during the traversal, the graph is connected. Otherwise, it is not..</h3>
+				<br>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Algorithm</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+1.	Input:
+	o	A graph G represented as an adjacency list.
+	o	Number of vertices V.
+2.	Steps:
+	o	Create a visited array of size V, initialized to False.
+	o	Initialize an empty queue and enqueue the starting node.
+	o	While the queue is not empty:
+			Dequeue the front node.
+			For each neighbor of the node:
+			If not visited, mark it as visited and enqueue it.
+	o	Check if all nodes in the visited array are True.
+	o	If yes, the graph is connected; otherwise, it is disconnected.
+
+
+						</pre>
+
+                       
+                    </div>
+					
+					
+					
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				
+				<h3><pre>
+				
+Time Complexity
+
+•	Time: O(V+E), where V is the number of vertices and E is the number of edges.
+	o	Each vertex and edge is processed once.
+	
+•	Space: O(V), due to the queue and the visited array.
+
+
+				</pre></h3>
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+bool isConnected(vector<vector<int>> &graph, int n) {
+    vector<bool> visited(n, false);  // Initialize visited array
+    queue<int> q;                    // Queue for BFS
+
+    // Start BFS from node 0
+    visited[0] = true;
+    q.push(0);
+
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+
+        // Visit all neighbors
+        for (int neighbor : graph[node]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+
+    // Check if all nodes are visited
+    for (bool nodeVisited : visited) {
+        if (!nodeVisited) return false;
+    }
+    return true;
+}
+
+int main() {
+    // Example graph as adjacency list
+    vector<vector<int>> graph = {
+        {1, 2},     // Node 0 is connected to 1, 2
+        {0, 2},     // Node 1 is connected to 0, 2
+        {0, 1, 3},  // Node 2 is connected to 0, 1, 3
+        {2}         // Node 3 is connected to 2
+    };
+
+    int n = 4;  // Number of nodes
+
+    if (isConnected(graph, n)) {
+        cout << "Graph is connected" << endl;
+    } else {
+        cout << "Graph is not connected" << endl;
+    }
+
+    return 0;
+}
+
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+function isConnected(graph, n) {
+    let visited = new Array(n).fill(false); // Initialize visited array
+    let queue = [];                         // Queue for BFS
+
+    // Start BFS from node 0
+    visited[0] = true;
+    queue.push(0);
+
+    while (queue.length > 0) {
+        let node = queue.shift(); // Dequeue the front node
+
+        // Visit all neighbors
+        for (let neighbor of graph[node]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                queue.push(neighbor);
+            }
+        }
+    }
+
+    // Check if all nodes are visited
+    for (let nodeVisited of visited) {
+        if (!nodeVisited) return false;
+    }
+    return true;
+}
+
+// Example graph as adjacency list
+let graph = [
+    [1, 2],       // Node 0 is connected to 1, 2
+    [0, 2],       // Node 1 is connected to 0, 2
+    [0, 1, 3],    // Node 2 is connected to 0, 1, 3
+    [2]           // Node 3 is connected to 2
+];
+
+let n = 4; // Number of nodes
+
+if (isConnected(graph, n)) {
+    console.log("Graph is connected");
+} else {
+    console.log("Graph is not connected");
+}
+
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+from collections import deque
+
+def is_connected(graph, n):
+    visited = [False] * n
+    queue = deque([0])  # Start BFS from node 0
+    visited[0] = True
+
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                visited[neighbor] = True
+                queue.append(neighbor)
+
+    # Check if all nodes are visited
+    return all(visited)
+
+# Example graph
+graph = {
+    0: [1, 2],
+    1: [0, 2],
+    2: [0, 1, 3],
+    3: [2]
+}
+n = 4  # Number of nodes
+
+# Output result
+print("Graph is connected:", is_connected(graph, n))
+
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+  
+  <script>
+    const canvas = document.getElementById('visualizer-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let nodes = [];
+    let edges = [];
+
+    // Set the canvas size to fill the visualization section
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+
+    function generateNodes(n) {
+        nodes = [];
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        const maxNodeRadius = Math.max(10, Math.min(30, (canvas.width / n) / 4));
+        const minDistanceBetweenNodes = maxNodeRadius * 2 + 20;
+
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n;
+            const x = centerX + 150 * Math.cos(angle);
+            const y = centerY + 150 * Math.sin(angle);
+
+            nodes.push({ id: i + 1, x: x, y: y, radius: maxNodeRadius });
+        }
+
+        adjustNodePositions();
+    }
+
+    function adjustNodePositions() {
+        const iterations = 1000;
+        const damping = 0.85;
+
+        for (let iter = 0; iter < iterations; iter++) {
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const nodeA = nodes[i];
+                    const nodeB = nodes[j];
+
+                    const dx = nodeB.x - nodeA.x;
+                    const dy = nodeB.y - nodeA.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < nodeA.radius + nodeB.radius + 10) {
+                        const angle = Math.atan2(dy, dx);
+                        const overlap = (nodeA.radius + nodeB.radius + 10 - distance) / 2;
+
+                        nodeA.x -= Math.cos(angle) * overlap * damping;
+                        nodeA.y -= Math.sin(angle) * overlap * damping;
+                        nodeB.x += Math.cos(angle) * overlap * damping;
+                        nodeB.y += Math.sin(angle) * overlap * damping;
+                    }
+                }
+
+                nodes[i].x = Math.max(nodes[i].radius, Math.min(canvas.width - nodes[i].radius, nodes[i].x));
+                nodes[i].y = Math.max(nodes[i].radius, Math.min(canvas.height - nodes[i].radius, nodes[i].y));
+            }
+        }
+    }
+
+    function drawNode(node) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = '#3498db';
+        ctx.fill();
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `${Math.max(10, node.radius - 5)}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.id, node.x, node.y);
+    }
+
+    function drawEdges() {
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 2;
+
+        edges.forEach(edge => {
+            const startNode = nodes.find(node => node.id === edge.start);
+            const endNode = nodes.find(node => node.id === edge.end);
+
+            if (startNode && endNode) {
+                ctx.beginPath();
+                ctx.moveTo(startNode.x, startNode.y);
+                ctx.lineTo(endNode.x, endNode.y);
+                ctx.stroke();
+            }
+        });
+    }
+
+    function drawGraph() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawEdges();
+        nodes.forEach(node => drawNode(node));
+    }
+
+    function isGraphConnected() {
+        if (nodes.length === 0) return false;
+
+        const visited = new Set();
+        const stack = [nodes[0].id];
+
+        while (stack.length > 0) {
+            const nodeId = stack.pop();
+            if (!visited.has(nodeId)) {
+                visited.add(nodeId);
+
+                edges.forEach(edge => {
+                    if (edge.start === nodeId && !visited.has(edge.end)) {
+                        stack.push(edge.end);
+                    } else if (edge.end === nodeId && !visited.has(edge.start)) {
+                        stack.push(edge.start);
+                    }
+                });
+            }
+        }
+
+        return visited.size === nodes.length;
+    }
+
+    document.getElementById('start-visualizer').addEventListener('click', function () {
+        const nodeCount = parseInt(document.getElementById('nodes').value);
+        if (isNaN(nodeCount) || nodeCount < 1) {
+            alert('Please enter a valid number of nodes.');
+            return;
+        }
+
+        generateNodes(nodeCount);
+        drawGraph();
+
+        const isConnected = isGraphConnected();
+        const resultText = isConnected ? 'Graph is Connected' : 'Graph is Not Connected';
+        const resultElement = document.getElementById('result-message');
+        resultElement.innerText = resultText;
+        resultElement.style.color = isConnected ? 'green' : 'red';
+    });
+
+    function addEdgeToList(start, end) {
+        const edgeListElement = document.getElementById('edge-list');
+        const newEdgeDiv = document.createElement('div');
+        newEdgeDiv.classList.add('edge-entry');
+        newEdgeDiv.textContent = `Edge: ${start}-${end}`;
+
+        // Add a remove button next to each edge
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.style.marginLeft = '10px';
+        removeButton.onclick = function () {
+            removeEdge(start, end, newEdgeDiv);
+        };
+
+        newEdgeDiv.appendChild(removeButton);
+        edgeListElement.appendChild(newEdgeDiv);
+    }
+
+    document.getElementById('add-edge').addEventListener('click', function () {
+        const edgeInput = document.querySelector('.edge-input').value;
+        const [start, end] = edgeInput.split('-').map(Number);
+        if (!isNaN(start) && !isNaN(end) && start !== end) {
+            edges.push({ start, end });
+            document.querySelector('.edge-input').value = ''; // Clear input
+
+            addEdgeToList(start, end);
+            drawGraph();
+        } else {
+            alert('Please enter a valid edge format, e.g., 1-2.');
+        }
+    });
+
+    function removeEdge(start, end, edgeDiv) {
+        // Remove the edge from the edges array
+        edges = edges.filter(edge => !(edge.start === start && edge.end === end));
+
+        // Remove the edge from the DOM list
+        edgeDiv.remove();
+
+        // Redraw the graph after removal
+        drawGraph();
+    }
+	
+	
+	// Function to copy the code to clipboard
+function copyCode() {
+    const activeSnippet = document.querySelector('.code-snippet.active');
+    if (activeSnippet) {
+        const code = activeSnippet.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('Code copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+    }
+}
+
+function openPopup_o() {
+    document.getElementById("overlay-o").classList.add("active-o");
+    document.getElementById("popup-o").classList.add("active-o");
+}
+
+function closePopup_o() {
+    document.getElementById("overlay-o").classList.remove("active-o");
+    document.getElementById("popup-o").classList.remove("active-o");
+}
+
+function showContent_o(contentId) {
+    const sections = document.querySelectorAll('.content-section-o');
+    const tabs = document.querySelectorAll('.tab-o');
+
+    sections.forEach(section => {
+        section.classList.remove('active-o');
+    });
+
+    tabs.forEach(tab => {
+        tab.classList.remove('active-o');
+    });
+
+    document.getElementById(contentId).classList.add('active-o');
+    document.querySelector(`.tab-o[onclick="showContent_o('${contentId}')"]`).classList.add('active-o');
+}
+
+// Function to show code based on selected language
+function showCode_o(language) {
+    // Remove 'active-o' class from all buttons and code snippets
+    const buttons = document.querySelectorAll('.tab-button-o');
+    const snippets = document.querySelectorAll('.code-snippet-o');
+    
+    buttons.forEach(button => button.classList.remove('active-o'));
+    snippets.forEach(snippet => snippet.classList.remove('active-o'));
+
+    // Add 'active-o' class to selected language button and code snippet
+    document.querySelector(`[onclick="showCode_o('${language}')"]`).classList.add('active-o');
+    document.getElementById(language).classList.add('active-o');
+}
+
+// Function to copy the code to clipboard
+function copyCode_o() {
+    const activeSnippet = document.querySelector('.code-snippet-o.active-o');
+    if (activeSnippet) {
+        const code = activeSnippet.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code)
+            .then(() => {
+                alert('Code copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+    }
+}
+
+  </script>
+</body>
+</html>

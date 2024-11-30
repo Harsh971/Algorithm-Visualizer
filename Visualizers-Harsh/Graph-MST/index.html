@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minimum Spanning Tree Visualizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f7fa;
+    }
+    .container {
+      display: flex;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 1200px;
+      width: 90%;
+      gap: 20px;
+    }
+    .input-section {
+      flex: 1;
+      min-width: 250px;
+    }
+    .input-section h2, .input-section h3 {
+      font-size: 1.2em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .input-section label {
+      font-weight: bold;
+      display: block;
+      margin: 8px 0 4px;
+    }
+    .input-section input, .input-section button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .input-section button {
+      background-color: #E85674;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .input-section button:hover {
+      background-color: #FF7777;
+    }
+    .canvas-section {
+      flex: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    canvas {
+      border: 1px solid #ddd;
+      background-color: #f8f9fb;
+      border-radius: 8px;
+    }
+    #result {
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      margin-top: 10px;
+    }
+    #edge-list {
+      max-height: 100px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 5px;
+      border-radius: 4px;
+      background-color: #f8f8f8;
+    }
+    .edge-entry {
+      font-size: 0.9em;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+    .edge-entry button {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+      margin-left: 10px;
+    }
+    .edge-entry button:hover {
+      background-color: #c0392b;
+    }
+	
+
+/* Open Popup Button Styling */
+#open-popup {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#popup.active {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto; /* Three tabs + space for close button */
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center; /* Center items vertically */
+}
+
+/* Tab Style */
+.tab {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: #e0e0e0;
+}
+
+.tab.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content {
+    overflow-y: auto;
+    max-height: 80%;
+    padding: 20px;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Show active content section */
+.content-section.active {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content {
+    position: relative;
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.code-snippet.active {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button:hover {
+    background-color: #FF7777;
+}
+
+/* Open Popup Button Styling */
+#open-popup-o {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay-o {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay-o.active-o {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup-o {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: auto;
+}
+
+#popup-o.active-o {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header-o {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center;
+}
+
+/* Tab Style */
+.tab-o {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab-o:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content-o {
+    
+    max-height: 80%;
+	width: 60%;
+	margin-right:-100px;
+   left: -200px;
+   box-sizing:border-box;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section-o {
+    opacity: 0;
+    display: none;
+	width:150%;
+    transition: opacity 0.3s ease;
+	
+}
+
+/* Show active content section */
+.content-section-o.active-o {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content-o::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content-o::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content-o::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup-o {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button-o {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup-o {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content-o {
+    position: relative;
+    max-width: 800px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+	
+	
+}
+
+/* Close button */
+.close-button-o {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container-o {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+	width :100%;
+}
+
+.tabs-o {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button-o {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button-o:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display-o {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet-o {
+    display: none;
+    margin: 0;
+    padding: 0;
+    color: #000000; /* Black text for the snippets */
+    background-color: #ffffff; /* Ensure snippets also have white background */
+}
+
+.code-snippet-o.active-o {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button-o {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button-o:hover {
+    background-color: #FF7777;
+}
+.container-eg-btn-3 {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 10px;
+  padding: .5em;
+  line-height: normal;
+}
+.container-eg-btn-3 .butto {
+  color: #fff;
+  margin: 20px;
+  padding: 12px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  transition: .3s;
+  z-index: 1;
+  background: #E85674;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.container-eg-btn-3 .button-1:hover {
+  box-shadow: 0 0.6em 0.5em -0.4em #fa4343;
+  transform: translateY(-0.25em);
+  background: #fa4343;
+}
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+
+/* General container for input fields */
+.input-section {
+    width: 30%; /* Limit the width of the section */
+    float: left; /* Float the section to the left */
+    padding: 20px; /* Add padding for inner spacing */
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+/* Input Fields Styling */
+#nodes, #edge-input, #weight {
+    border: none; /* Remove default borders */
+    border-bottom: 2px solid red; /* Red bottom border */
+    outline: none; /* Remove outline when focused */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Text color */
+    font-size: 16px; /* Readable font size */
+    padding: 5px; /* Add padding for spacing */
+    width: 100%; /* Make input fields responsive */
+    margin-bottom: 15px; /* Space between inputs */
+}
+
+/* Placeholder Styling */
+#nodes::placeholder, #edge-input::placeholder, #weight::placeholder {
+    color: red; /* Placeholder text color */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+/* Focus State */
+#nodes:focus, #edge-input:focus, #weight:focus {
+    border-bottom: 2px solid red; /* Maintain red bottom border on focus */
+}
+
+/* Button Styling */
+button {
+    background-color: red; /* Initial button background */
+    color: white; /* Text color */
+    border: none; /* Remove default borders */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Comfortable padding */
+    font-size: 16px; /* Font size for readability */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+    margin-top: 10px; /* Add space above buttons */
+}
+
+/* Button Hover Effect */
+button:hover {
+    background-color: darkred; /* Darker red on hover */
+    transform: translateY(-3px) scale(1.05); /* Slight zoom and upward movement */
+}
+
+/* Container for added edges */
+#edge-list {
+    border: 1px solid #ddd; /* Light border around the list */
+    padding: 10px; /* Padding for spacing */
+    min-height: 50px; /* Minimum height for the list */
+    margin-top: 10px; /* Space between the list and other elements */
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="input-section">
+      <h2>Graph Input</h2>
+      <label for="nodes">Number of Nodes (n):</label>
+      <input type="number" id="nodes" placeholder="Enter number of nodes">
+      
+      <label for="edge-input">Edges (start - end - weight):</label>
+      <input type="text" id="edge-input" placeholder="e.g., 1-2">
+      <input type="number" id="weight" placeholder="weight">
+	  
+	  <div class="container-eg-btn-3">
+			<button class="butto button-1" id="add-edge">Add Edge</button>
+</div>
+      
+      
+      <h3>Added Edges:</h3>
+      <div id="edge-list"></div>
+      
+     
+      <div class="container-eg-btn-3">
+			<button class="butto button-1" id="start-visualizer">Generate Nodes</button>
+			<button class="butto button-1" id="find-path">Find MST</button>
+</div>
+      
+      
+      <h3 id="result"></h3>
+    </div>
+    
+    <div class="canvas-section">
+      <canvas id="visualizer-canvas"></canvas>
+    </div>
+  </div>
+  
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Minimum Spanning Tree</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Graph MST</h1>
+				<h4>A Minimum Spanning Tree (MST) is a subgraph of a given connected, weighted graph that:
+<br>1.	Includes all the vertices.
+<br>2.	Has the minimum possible total edge weight.
+<br>3.	Forms a tree (no cycles).
+.</h4>
+				
+				<div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('k-o')">Kruskal's Algorithm</button>
+                        <button class="tab-button-o" onclick="showCode_o('p-o')">Prim's Algorithm</button>
+                        
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="k-o" class="code-snippet-o active-o">
+1.	Input:
+	o	A connected, weighted graph with V vertices and E edges.
+2.	Sort Edges:
+	o	Sort all edges in increasing order of their weights.
+3.	Union-Find (Disjoint Set):
+	o	Use the Union-Find data structure to ensure no cycles are formed when adding an edge.
+4.	Select Edges:
+	o	Iteratively add the smallest edge to the MST, skipping edges that form a cycle.
+5.	Stop:
+	o	Stop when the MST containsV−1 edges.
+
+
+                        </pre>
+
+                        <pre id="p-o" class="code-snippet-o">
+1.	Input:
+	o	A connected, weighted graph with V vertices and E edges
+2.	Initialize::
+	o	Start with an arbitrary vertex S.
+	o	Keep a visited set to track vertices included in the MST.
+	o	Use a priority queue (min-heap) to efficiently select the smallest edge at each step.
+3.	Iteratively Select Edges:
+	o	Push all edges of S into the priority queue.
+	o	While the MST doesn't contain V−1 edges.
+		o	Add it to the MST.
+		o	Add the vertex to the visited set.
+		o	Push all edges of the new vertex into the queue.
+4.	Stop:
+	o	Stop when all vertices are in the MST or when V−1 edges are selected.
+5.	Output:
+	o	The MST, represented as a set of edges.
+
+                        </pre>
+
+                       
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+			
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int src, dest, weight;
+};
+
+// Comparator to sort edges by weight
+bool compare(Edge a, Edge b) {
+    return a.weight < b.weight;
+}
+
+// Find function for Union-Find
+int findParent(int v, vector<int> &parent) {
+    if (v == parent[v]) return v;
+    return parent[v] = findParent(parent[v], parent); // Path compression
+}
+
+// Union function for Union-Find
+void unionSet(int u, int v, vector<int> &parent, vector<int> &rank) {
+    u = findParent(u, parent);
+    v = findParent(v, parent);
+
+    if (rank[u] < rank[v]) {
+        parent[u] = v;
+    } else if (rank[u] > rank[v]) {
+        parent[v] = u;
+    } else {
+        parent[v] = u;
+        rank[u]++;
+    }
+}
+
+void kruskalMST(vector<Edge> &edges, int V) {
+    sort(edges.begin(), edges.end(), compare); // Sort edges by weight
+
+    vector<int> parent(V);
+    vector<int> rank(V, 0);
+
+    for (int i = 0; i < V; i++) parent[i] = i; // Initialize Union-Find
+
+    vector<Edge> mst; // Store the MST edges
+    int mstWeight = 0;
+
+    for (Edge &edge : edges) {
+        int u = findParent(edge.src, parent);
+        int v = findParent(edge.dest, parent);
+
+        // If u and v are in different sets, add edge to MST
+        if (u != v) {
+            mst.push_back(edge);
+            mstWeight += edge.weight;
+            unionSet(u, v, parent, rank);
+        }
+    }
+
+    // Print the MST
+    cout << "Edges in MST:\n";
+    for (Edge &edge : mst) {
+        cout << edge.src << " - " << edge.dest << " : " << edge.weight << "\n";
+    }
+    cout << "Total weight of MST: " << mstWeight << endl;
+}
+
+int main() {
+    int V = 4; // Number of vertices
+    vector<Edge> edges = {
+        {0, 1, 10},
+        {0, 2, 6},
+        {0, 3, 5},
+        {1, 3, 15},
+        {2, 3, 4}
+    };
+
+    kruskalMST(edges, V);
+
+    return 0;
+}
+
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+class Edge {
+    constructor(src, dest, weight) {
+        this.src = src;
+        this.dest = dest;
+        this.weight = weight;
+    }
+}
+
+function findParent(v, parent) {
+    if (v !== parent[v]) {
+        parent[v] = findParent(parent[v], parent); // Path compression
+    }
+    return parent[v];
+}
+
+function unionSets(u, v, parent, rank) {
+    let rootU = findParent(u, parent);
+    let rootV = findParent(v, parent);
+
+    if (rank[rootU] < rank[rootV]) {
+        parent[rootU] = rootV;
+    } else if (rank[rootU] > rank[rootV]) {
+        parent[rootV] = rootU;
+    } else {
+        parent[rootV] = rootU;
+        rank[rootU]++;
+    }
+}
+
+function kruskalMST(vertices, edges) {
+    edges.sort((a, b) => a.weight - b.weight); // Sort edges by weight
+    const parent = Array.from({ length: vertices }, (_, i) => i);
+    const rank = Array(vertices).fill(0);
+    const mst = [];
+    let mstWeight = 0;
+
+    for (let edge of edges) {
+        const { src, dest, weight } = edge;
+
+        if (findParent(src, parent) !== findParent(dest, parent)) { // If no cycle
+            mst.push(edge);
+            mstWeight += weight;
+            unionSets(src, dest, parent, rank);
+        }
+    }
+
+    // Print MST
+    console.log("Edges in MST:");
+    mst.forEach(({ src, dest, weight }) => {
+        console.log(`${src} -- ${dest} (weight: ${weight})`);
+    });
+    console.log(`Total weight of MST: ${mstWeight}`);
+}
+
+// Example Graph
+const vertices = 4;
+const edges = [
+    new Edge(0, 1, 10),
+    new Edge(0, 2, 6),
+    new Edge(0, 3, 5),
+    new Edge(1, 3, 15),
+    new Edge(2, 3, 4)
+];
+
+kruskalMST(vertices, edges);
+
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+
+# Union function for Union-Find
+def union_sets(u, v, parent, rank):
+    root_u = find_parent(u, parent)
+    root_v = find_parent(v, parent)
+    if rank[root_u] < rank[root_v]:
+        parent[root_u] = root_v
+    elif rank[root_u] > rank[root_v]:
+        parent[root_v] = root_u
+    else:
+        parent[root_v] = root_u
+        rank[root_u] += 1
+
+def kruskal_mst(vertices, edges):
+    edges.sort(key=lambda e: e.weight)  # Sort edges by weight
+    parent = list(range(vertices))
+    rank = [0] * vertices
+    mst = []
+    mst_weight = 0
+
+    for edge in edges:
+        u, v, w = edge.src, edge.dest, edge.weight
+        if find_parent(u, parent) != find_parent(v, parent):  # If no cycle
+            mst.append(edge)
+            mst_weight += w
+            union_sets(u, v, parent, rank)
+
+    # Print MST
+    print("Edges in MST:")
+    for edge in mst:
+        print(f"{edge.src} -- {edge.dest} (weight: {edge.weight})")
+    print(f"Total weight of MST: {mst_weight}")
+
+# Example Graph
+vertices = 4
+edges = [
+    Edge(0, 1, 10),
+    Edge(0, 2, 6),
+    Edge(0, 3, 5),
+    Edge(1, 3, 15),
+    Edge(2, 3, 4)
+]
+
+kruskal_mst(vertices, edges)
+
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+  <script src="script.js"></script>
+</body>
+</html>

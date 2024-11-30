@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Visualization</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="array-size">Array Size (n):</label>
+                    <input type="number" class="form-control" id="array-size" placeholder="Enter number of elements">
+                </div>
+                <div class="form-group">
+                    <label for="array-elements">Array Elements:</label>
+                    <input type="text" class="form-control" id="array-elements" placeholder="Enter space-separated values">
+                </div>
+                <div class="form-group">
+                    <label for="target-element">Target Element:</label>
+                    <input type="number" class="form-control" id="target-element" placeholder="Enter the target value">
+                </div>
+				<div class="container-eg-btn-3">
+			<button id="startButton visualize-button" class="butto button-1 btn btn-primary">Visualize</button>
+			
+</div>
+                
+                
+            </div>
+            <div class="col-md-6">
+                <div id="visualization" class="visualization"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Code Snippet -->
+    <div id="codeModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">C Code Snippet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <pre id="code-snippet"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Standard Binary Search</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Standard Binary Search</h1>
+				<h5>Binary Search finds the index of a target element in a sorted array. If the element is found, it returns the index; otherwise, it returns -1.</h5>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Algorithm</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+1.	Set low to 0 and high to the last index of the array.
+
+2.	While low is less than or equal to high:
+	o	Calculate the middle index mid.
+	o	If array[mid] equals the target, return mid.
+	o	If array[mid] is less than the target, search in the right half (low = mid + 1).
+	o	If array[mid] is greater than the target, search in the left half (high = mid - 1).
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				<h6><pre>
+				
+The time complexity of standard binary search is: <b>O(log n)</b>
+
+Here's why:
+1.Binary search works by dividing the search space in half after each comparison.
+2.Starting with a list of n elements, each step reduces the number of elements to search by half.
+3.This halving continues until the element is found or the search space is empty.
+
+Since the number of divisions required to reduce n elements to 1 element is approximately <b>O(log n)</b>, 
+the time complexity of binary search is <b>O(log n)</b>.
+
+				</pre></h6>
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+using namespace std;
+
+int binarySearch(int arr[], int size, int target) {
+    int low = 0, high = size - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 3, 5, 7, 9};
+    int target = 5;
+    int size = sizeof(arr) / sizeof(arr[0]);
+    cout << "Index of target: " << binarySearch(arr, size, target) << endl;  // Output: 2
+    return 0;
+}
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+public class BinarySearch {
+    public static int binarySearch(int[] arr, int target) {
+        int low = 0, high = arr.length - 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (arr[mid] == target) return mid;
+            else if (arr[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 3, 5, 7, 9};
+        int target = 5;
+        System.out.println("Index of target: " + binarySearch(arr, target));  // Output: 2
+    }
+}
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+def binary_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+# Example
+arr = [1, 3, 5, 7, 9]
+target = 5
+print("Index of target:", binary_search(arr, target))  # Output: 2
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+	
+	
+	
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

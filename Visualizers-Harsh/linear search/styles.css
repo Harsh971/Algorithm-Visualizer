@@ -1,0 +1,693 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    height: 100vh;
+    margin: 0;
+}
+
+.left-panel, .right-panel {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.left-panel {
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.right-panel {
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.visualization-container {
+    padding: 20px;
+    height: 100%;
+    background-color: #f7f9fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.block {
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.highlight {
+    background-color: #28a745;
+    transform: scale(1.1);
+}
+
+.found {
+    background-color: #dc3545;
+    transform: scale(1.2);
+}
+
+
+
+/* Open Popup Button Styling */
+#open-popup {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#popup.active {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto; /* Three tabs + space for close button */
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center; /* Center items vertically */
+}
+
+/* Tab Style */
+.tab {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: #e0e0e0;
+}
+
+.tab.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content {
+    overflow-y: auto;
+    max-height: 80%;
+    padding: 20px;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Show active content section */
+.content-section.active {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content {
+    position: relative;
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet {
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+
+.code-snippet.active {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button:hover {
+    background-color: #FF7777;
+}
+
+/* Open Popup Button Styling */
+#open-popup-o {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the open button */
+#open-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* General Popup Styling */
+#overlay-o {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+#overlay-o.active-o {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup-o {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    overflow: auto;
+}
+
+#popup-o.active-o {
+    transform: translateX(0);
+}
+
+/* Header Grid Style */
+.popup-header-o {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    align-items: center;
+}
+
+/* Tab Style */
+.tab-o {
+    background-color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #E85674;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.tab-o:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+/* Smooth transition for content switching */
+.popup-content-o {
+    
+    max-height: 80%;
+	width: 60%;
+	margin-right:-100px;
+   left: -200px;
+   box-sizing:border-box;
+    position: relative;
+}
+
+/* Hide all content sections by default */
+.content-section-o {
+    opacity: 0;
+    display: none;
+	width:150%;
+    transition: opacity 0.3s ease;
+	
+}
+
+/* Show active content section */
+.content-section-o.active-o {
+    opacity: 1;
+    display: block;
+}
+
+/* Custom scrollbar for popup content */
+.popup-content-o::-webkit-scrollbar {
+    width: 10px;
+}
+
+.popup-content-o::-webkit-scrollbar-thumb {
+    background-color: #E85674;
+    border-radius: 5px;
+}
+
+.popup-content-o::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+/* Close Button Styling */
+#close-popup-o {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#close-popup-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup button */
+.open-popup-button-o {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-popup-button-o:hover {
+    background-color: #FF7777;
+}
+
+/* Popup container */
+.popup-o {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup-content-o {
+    position: relative;
+    max-width: 800px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+	
+	
+}
+
+/* Close button */
+.close-button-o {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Styling for the tab container */
+.code-tab-container-o {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+	width :100%;
+}
+
+.tabs-o {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab-button-o {
+    padding: 8px 16px;
+    border: 1px solid #E85674;
+    background-color: #f1f1f1;
+    color: #E85674;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button-o.active-o {
+    background-color: #E85674;
+    color: #fff;
+}
+
+.tab-button-o:hover {
+    background-color: #FF7777;
+    color: #fff;
+}
+
+/* Code display styling */
+.code-display-o {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.code-snippet-o {
+    display: none;
+    margin: 0;
+    padding: 0;
+    color: #000000; /* Black text for the snippets */
+    background-color: #ffffff; /* Ensure snippets also have white background */
+}
+
+.code-snippet-o.active-o {
+    display: block;
+}
+
+/* Copy button styling */
+.copy-button-o {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    background-color: #E85674;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-button-o:hover {
+    background-color: #FF7777;
+}
+
+.container-eg-btn-3 {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 10px;
+  padding: .5em;
+  line-height: normal;
+}
+.container-eg-btn-3 .butto {
+  color: #fff;
+  margin: 20px;
+  padding: 12px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  transition: .3s;
+  z-index: 1;
+  background: #E85674;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.container-eg-btn-3 .button-1:hover {
+  box-shadow: 0 0.6em 0.5em -0.4em #fa4343;
+  transform: translateY(-0.25em);
+  background: #fa4343;
+}
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+
+
+
+
+/* General styling for input fields */
+.form-group {
+    margin-bottom: 20px; /* Add spacing between form groups */
+}
+
+.form-control {
+    border: none; /* Remove default border */
+    border-bottom: 2px solid red; /* Red bottom border */
+    outline: none; /* Remove outline when focused */
+    background-color: transparent; /* Transparent background */
+    color: black; /* Text color */
+    font-size: 16px; /* Readable font size */
+    padding: 5px; /* Padding for spacing */
+    width: 100%; /* Make inputs responsive */
+}
+
+/* Placeholder styling */
+.form-control::placeholder {
+    color: red; /* Red color for placeholder */
+    font-style: italic; /* Italicize placeholder text */
+}
+
+/* Focus state styling for input fields */
+.form-control:focus {
+    border-bottom: 2px solid red; /* Red bottom border on focus */
+}
+
+/* Label styling */
+label {
+    font-weight: bold; /* Make labels bold */
+    color: black; /* Label color */
+    display: block; /* Ensure labels are displayed as blocks */
+    margin-bottom: 5px; /* Space between label and input field */
+}

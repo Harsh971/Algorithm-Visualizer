@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Operation Visualizer</title>
+    <link rel="stylesheet" href="stack_operation.css">
+</head>
+<body>
+    <div id="input-section">
+        <h2>Stack Operation Visualizer</h2>
+        <label for="stack-size">Max Number of Elements (n):</label>
+        <input type="number" id="stack-size" min="1"><br><br>
+
+        <label for="stack-value">Value to Push:</label>
+        <input type="number" id="stack-value"><br><br>
+
+        <div class="container-eg-btn-3">
+			<button class="butto button-1" onclick="pushToStack()">Push</button>
+			<button class="butto button-1" onclick="popFromStack()">Pop</button>
+			<button class="butto button-1" onclick="showSize()">Size</button>
+			<button class="butto button-1"onclick="checkEmpty()">Empty</button>
+</div>
+		
+		<br><br>
+        
+		
+        <!--<button onclick="showCode()">Show Code</button>-->
+        <div class="code-snippet" id="code-snippet"></div>
+    </div>
+
+    <div id="visualizer-section">
+        <div id="stack-visual"></div>
+    </div>
+
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Push</div>
+            <div class="tab-o" onclick="showContent_o('text2-o')">Pop</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Size</div>
+			<div class="tab-o" onclick="showContent_o('text4-o')">Empty</div>
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Push Operation</h1>
+				<h4>Add the element to the top of the stack.</h4>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Code Function</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+stack.push(element); // Add element to the stack
+
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>				
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <h1>Pop Operation</h1>
+				<h4>Remove and return the top element of the stack.Ensure the stack is not empty before removing.</h4>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Code Function</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+if (!stack.empty()) {
+    int element = stack.top(); // Access the top element
+    stack.pop(); // Remove the top element
+}
+
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>	
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <h1>Size</h1>
+				<h4>Return the total number of elements currently in the stack.</h4>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Code Function</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+int size = stack.size(); // Get the size of the stack
+
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+			<div id="text4-o" class="content-section-o">
+                <h1>Empty</h1>
+				<h4>Check if the stack contains no elements.Return true if empty, otherwise false.</h4>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Code Function</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+bool isEmpty = stack.empty(); // Check if the stack is empty
+
+
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="stack_operation.js"></script>
+</body>
+</html>

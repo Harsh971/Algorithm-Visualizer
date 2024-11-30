@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doubly Linked List Search Visualizer</title>
+    <link rel="stylesheet" href="./doubly_LL_searching.css">
+</head>
+<body>
+    <div class="container">
+        <div class="input-section">
+            <h2>Searching in Doubly Linked List</h2>
+            <label for="numNodes">Number of Nodes (n):</label>
+            <input type="number" id="numNodes" min="1" required>
+            <label for="listElements">Linked List Elements (comma-separated):</label>
+            <input type="text" id="listElements" placeholder="e.g., 1,2,3,4">
+            <label for="searchElement">Element to Search:</label>
+            <input type="text" id="searchElement" placeholder="e.g., 3">
+			<div class="container-eg-btn-3">
+			<button id="startButton" class="butto button-1">START</button>
+			
+			</div>
+        </div>
+
+        <div class="animation-section">
+            <!--<h2>Animation Area</h2>-->
+            <div id="linkedListDisplay" class="linked-list"></div>
+            <div id="operationDisplay" class="operation-display"></div>
+        </div>
+    </div>
+
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <pre id="cppCode"></pre>
+        </div>
+    </div>
+
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Linked List Searching</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Double LinkedList Searcing</h1>
+				<h3>A Doubly Linked List (DLL) is a type of linked list where each node contains three components:
+
+<br>1. Data
+<br>2. A pointer to the previous node (prev)
+<br>3. A pointer to the next node (next).</h3>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Algorithm</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+1. Initilize current to point to the head of the list.
+2. While current is not NULL:
+	If current->data equals the target element, return the node or its position.
+	Move current to current->next.
+3. If the end of the list is reached without finding the element, return NULL or indicate the element is not found.
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+using namespace std;
+
+// Define a node for the doubly linked list
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+};
+
+// Function to search for an element in the doubly linked list
+Node* search(Node* head, int target) {
+    Node* current = head;
+    while (current != NULL) {
+        if (current->data == target) {
+            return current; // Element found
+        }
+        current = current->next;
+    }
+    return NULL; // Element not found
+}
+
+int main() {
+    // Example usage
+    Node* head = new Node{10, NULL, NULL};
+    Node* second = new Node{20, head, NULL};
+    Node* third = new Node{30, second, NULL};
+    head->next = second;
+    second->next = third;
+
+    int target = 20;
+    Node* result = search(head, target);
+    if (result) {
+        cout << "Element " << target << " found.\n";
+    } else {
+        cout << "Element " << target << " not found.\n";
+    }
+    return 0;
+}
+
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+class DoublyLinkedList {
+    static class Node {
+        int data;
+        Node prev, next;
+
+        Node(int data) {
+            this.data = data;
+            this.prev = null;
+            this.next = null;
+        }
+    }
+
+    public static Node search(Node head, int target) {
+        Node current = head;
+        while (current != null) {
+            if (current.data == target) {
+                return current; // Element found
+            }
+            current = current.next;
+        }
+        return null; // Element not found
+    }
+
+    public static void main(String[] args) {
+        Node head = new Node(10);
+        Node second = new Node(20);
+        Node third = new Node(30);
+
+        head.next = second;
+        second.prev = head;
+        second.next = third;
+        third.prev = second;
+
+        int target = 20;
+        Node result = search(head, target);
+        if (result != null) {
+            System.out.println("Element " + target + " found.");
+        } else {
+            System.out.println("Element " + target + " not found.");
+        }
+    }
+}
+
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.prev = None
+        self.next = None
+
+def search(head, target):
+    current = head
+    while current:
+        if current.data == target:
+            return current  # Element found
+        current = current.next
+    return None  # Element not found
+
+# Example usage
+if __name__ == "__main__":
+    head = Node(10)
+    second = Node(20)
+    third = Node(30)
+
+    head.next = second
+    second.prev = head
+    second.next = third
+    third.prev = second
+
+    target = 20
+    result = search(head, target)
+    if result:
+        print(f"Element {target} found.")
+    else:
+        print(f"Element {target} not found.")
+
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+    <script src="./doubly_LL_searching.js"></script>
+</body>
+</html>

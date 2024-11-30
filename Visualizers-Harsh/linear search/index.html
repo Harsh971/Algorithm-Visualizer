@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Search Algorithm Visualizer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Side: User Input and Code Editor -->
+            <div class="col-md-4 p-4 left-panel">
+                <div class="user-inputs mb-4">
+                    <h2>Linear Search Configuration</h2>
+                    <div class="form-group">
+                        <label for="array-size">Array Size (n):</label>
+                        <input type="number" id="array-size" class="form-control" placeholder="Enter array size">
+                    </div>
+                    <div class="form-group">
+                        <label for="array-values">Array Values (comma-separated):</label>
+                        <input type="text" id="array-values" class="form-control" placeholder="Enter array values">
+                    </div>
+                    <div class="form-group">
+                        <label for="search-element">Search Element:</label>
+                        <input type="number" id="search-element" class="form-control" placeholder="Enter search element">
+                    </div>
+                </div>
+
+				<div class="container-eg-btn-3">
+			<button class="butto button-1 btn btn-primary btn-block" id="visualize-button">Visualize</button>
+</div>
+                
+            </div>
+
+            <!-- Right Side: Visualization -->
+            <div class="col-md-8 p-4 right-panel">
+                <h2>Visualization</h2>
+                <div id="visualization" class="visualization-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Snippet Modal -->
+    <div class="modal fade" id="codeModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="codeModalLabel">Linear Search Code Snippet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <pre id="code-snippet" class="bg-light p-3 border rounded"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Open Popup Button -->
+    <button id="open-popup-o" onclick="openPopup_o()">&#x21A4;</button>
+
+    <!-- Overlay for darkening background -->
+    <div id="overlay-o" onclick="closePopup_o()"></div>
+
+    <!-- Popup Sidebar -->
+    <div id="popup-o">
+        <div class="popup-header-o">
+            <div class="tab-o active-o" onclick="showContent_o('text1-o')">Linear Search</div>
+            <!--<div class="tab-o" onclick="showContent_o('text2-o')">Text 2</div>
+            <div class="tab-o" onclick="showContent_o('text3-o')">Text 3</div> -->
+            <!-- Close button positioned within the header, aligned to the right -->
+            <button id="close-popup-o" onclick="closePopup_o()">&#x2715;</button>
+        </div>
+
+        <!-- Popup Content Area -->
+        <div class="popup-content-o">
+            <div id="text1-o" class="content-section-o active-o">
+                <h1>Linear Search</h1>
+				<h4>Linear Search is a simple searching algorithm that checks each element in an array or list one by one until it finds the target element or reaches the end of the list..</h4>
+				<!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">Algorithm</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+1.	Start from the first element of the array.
+2.	Compare each element with the target value.
+3.	If you find the target, return its index.
+4.	If you reach the end of the array without finding the target, return -1.
+
+
+						</pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+				
+				<h6><pre>
+				
+Time Complexity
+
+•	Worst Case: O(n), where nnn is the number of elements in the array. This happens if the target is at the end of the list or is not in the list at all.
+•	Best Case: O(1), if the target is the first element.
+•	Average Case: O(n).
+
+Space Complexity
+•	O(1) because linear search only requires a constant amount of extra space for variables.
+
+
+				</pre></h6>
+				
+				<h3>Code : </h3>
+                <!-- Code tab container -->
+                <div class="code-tab-container-o">
+                    <div class="tabs-o">
+                        <button class="tab-button-o active-o" onclick="showCode_o('cpp-o')">C++</button>
+                        <button class="tab-button-o" onclick="showCode_o('java-o')">Java</button>
+                        <button class="tab-button-o" onclick="showCode_o('python-o')">Python</button>
+                        
+                    </div>
+                    <div class="code-display-o">
+                        <!-- Code snippets for each language -->
+                        <pre id="cpp-o" class="code-snippet-o active-o">
+#include <iostream>
+using namespace std;
+
+int linearSearch(int arr[], int size, int target) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            return i;  // Return the index of the target
+        }
+    }
+    return -1;  // If the target is not found
+}
+
+int main() {
+    int arr[] = {10, 23, 45, 70, 11, 15};
+    int target = 70;
+    int size = sizeof(arr) / sizeof(arr[0]);
+    cout << "Index of target: " << linearSearch(arr, size, target) << endl;  // Output: 3
+    return 0;
+}
+
+
+                        </pre>
+
+                        <pre id="java-o" class="code-snippet-o">
+public class LinearSearch {
+    public static int linearSearch(int[] arr, int target) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
+                return i;  // Return the index of the target
+            }
+        }
+        return -1;  // If the target is not found
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {10, 23, 45, 70, 11, 15};
+        int target = 70;
+        System.out.println("Index of target: " + linearSearch(arr, target));  // Output: 3
+    }
+}
+
+
+                        </pre>
+
+                        <pre id="python-o" class="code-snippet-o">
+def linear_search(arr, target):
+    for index, element in enumerate(arr):
+        if element == target:
+            return index  # Return the index of the target
+    return -1  # If the target is not found
+
+# Example usage
+arr = [10, 23, 45, 70, 11, 15]
+target = 70
+print("Index of target:", linear_search(arr, target))  # Output: 3
+
+
+                        </pre>
+
+                       
+                    </div>
+                    <!-- Copy Button -->
+                    <button onclick="copyCode_o()" class="copy-button-o">Copy</button>
+                </div>
+            </div>
+            <div id="text2-o" class="content-section-o">
+                <p>This is the content for Text 2.</p>
+            </div>
+            <div id="text3-o" class="content-section-o">
+                <p>This is the content for Text 3.</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
