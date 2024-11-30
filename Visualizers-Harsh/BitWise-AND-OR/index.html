@@ -846,6 +846,55 @@ body, html, ul, li, p, h1, h2, h3, h4, h5, h6, a {
 }
 
 
+/* For the blurred background */
+.blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+/* The popup container */
+.custom-alert {
+    background-color: white;
+    border: 2px solid red;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Alert text */
+.custom-alert p {
+    color: black;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Close button */
+.custom-alert button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.custom-alert button:hover {
+    background-color: darkred;
+}
+
 
   </style>
 </head>
@@ -1180,21 +1229,87 @@ print(f"The result of {A} OR {B} is: {result}")  # Output: 15
     const container = document.getElementById('inputFieldsContainer');
     const inputs = container.querySelectorAll('.integer-input');
     integers = [];
-
+  
+    // Collect valid inputs
     inputs.forEach(input => {
       const value = parseInt(input.value, 10);
       if (!isNaN(value)) {
         integers.push(value);
       }
     });
-
-    if (integers.length < 2) {
-      alert("Please enter at least two valid numbers.");
-    } else {
+  
+    if (integers.length >= 2) {
       displayBinary();
+    } else {
+      // Function to show custom popup
+      function showCustomPopup(message) {
+        // Check if popup or overlay already exists to avoid duplicates
+        const existingPopup = document.getElementById('customPopup');
+        const existingOverlay = document.getElementById('popupOverlay');
+        if (existingPopup || existingOverlay) return;
+  
+        // Create an overlay to block interactions
+        const overlay = document.createElement('div');
+        overlay.id = 'popupOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        overlay.style.zIndex = '999'; // Ensure it's below the popup
+        document.body.appendChild(overlay);
+  
+        // Create popup container
+        const popup = document.createElement('div');
+        popup.id = 'customPopup';
+        popup.style.position = 'fixed';
+        popup.style.top = '50%';
+        popup.style.left = '50%';
+        popup.style.transform = 'translate(-50%, -50%)';
+        popup.style.backgroundColor = '#ffe6e6';
+        popup.style.border = '2px solid red';
+        popup.style.padding = '20px';
+        popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        popup.style.zIndex = '1000'; // Ensure it's above the overlay
+        popup.style.textAlign = 'center';
+        popup.style.borderRadius = '8px';
+        popup.style.fontFamily = "'Arial', sans-serif";
+  
+        // Add message to popup
+        const messageText = document.createElement('p');
+        messageText.textContent = message;
+        messageText.style.color = '#721c24';
+        messageText.style.marginBottom = '15px';
+        messageText.style.fontSize = '16px';
+        popup.appendChild(messageText);
+  
+        // Add close button
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.style.backgroundColor = 'red';
+        closeButton.style.color = 'white';
+        closeButton.style.border = 'none';
+        closeButton.style.padding = '10px 20px';
+        closeButton.style.borderRadius = '5px';
+        closeButton.style.cursor = 'pointer';
+  
+        closeButton.onclick = () => {
+          document.body.removeChild(popup);
+          document.body.removeChild(overlay);
+        };
+  
+        popup.appendChild(closeButton);
+  
+        // Append popup to body
+        document.body.appendChild(popup);
+      }
+  
+      // Display popup with a custom message
+      showCustomPopup("Please enter at least two Integers.");
     }
   }
-
+  
   function displayBinary() {
     const binaryDisplay = document.getElementById('binaryDisplay');
     const binaryIntegers = integers.map(num => num.toString(2).padStart(8, '0')); // 8-bit binary format

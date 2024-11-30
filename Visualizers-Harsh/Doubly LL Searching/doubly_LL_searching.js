@@ -66,8 +66,70 @@ function startVisualizer() {
     const listElements = document.getElementById("listElements").value.split(',').map(e => e.trim());
     const searchElement = document.getElementById("searchElement").value.trim();
 
+    // Remove any existing popup and overlay
+    const existingPopup = document.getElementById("errorPopup");
+    const existingOverlay = document.getElementById("popupOverlay");
+    if (existingPopup) existingPopup.remove();
+    if (existingOverlay) existingOverlay.remove();
+
+    // Check for invalid input
     if (!numNodes || !listElements || listElements.length != numNodes || !searchElement) {
-        alert("Provide proper input.");
+        // Create an overlay to block interactions
+        const overlay = document.createElement("div");
+        overlay.id = "popupOverlay";
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        overlay.style.zIndex = "999"; // Ensure it is below the popup
+        document.body.appendChild(overlay);
+
+        // Create a popup container
+        const popup = document.createElement("div");
+        popup.id = "errorPopup";
+        popup.style.position = "fixed";
+        popup.style.top = "50%";
+        popup.style.left = "50%";
+        popup.style.transform = "translate(-50%, -50%)";
+        popup.style.backgroundColor = "#ffe6e6";
+        popup.style.border = "2px solid red";
+        popup.style.padding = "20px";
+        popup.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+        popup.style.borderRadius = "8px";
+        popup.style.zIndex = "1000"; // Ensure it is above the overlay
+        popup.style.textAlign = "center";
+        popup.style.fontFamily = "'Arial', sans-serif";
+
+        // Add error message
+        const message = document.createElement("p");
+        message.innerText = "Provide proper input.";
+        message.style.color = "#721c24";
+        message.style.marginBottom = "15px";
+        message.style.fontSize = "16px";
+        popup.appendChild(message);
+
+        // Add close button
+        const closeButton = document.createElement("button");
+        closeButton.innerText = "Close";
+        closeButton.style.backgroundColor = "red";
+        closeButton.style.color = "white";
+        closeButton.style.border = "none";
+        closeButton.style.padding = "10px 20px";
+        closeButton.style.borderRadius = "5px";
+        closeButton.style.cursor = "pointer";
+
+        closeButton.addEventListener("click", () => {
+            popup.remove();
+            overlay.remove();
+        });
+
+        popup.appendChild(closeButton);
+
+        // Append popup to the body
+        document.body.appendChild(popup);
+
         return;
     }
 
@@ -102,6 +164,7 @@ function startVisualizer() {
 
     searchInDoublyLinkedList(listElements, searchElement);
 }
+
 
 function searchInDoublyLinkedList(list, searchValue) {
     const operationDisplay = document.getElementById("operationDisplay");
